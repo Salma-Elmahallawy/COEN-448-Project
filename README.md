@@ -6,7 +6,6 @@ Find the project description in Documentation/COEN448_ProjectDescription
 <ins>Unit Tests</ins> : JUnit <br>
 <ins>Project Management Tool</ins> : Jira <br> 
 
-
 ## Contributors
 Rami Ajam  
 40049357  
@@ -16,7 +15,7 @@ Jacob Alfaro Enriquez
 40095550  
 jacobrodolfo1999@gmail.com  
 
-Mohamad-noaman Fawaz 
-40049853
-noamanfawaz@hotmail.com
+Mohamad-noaman Fawaz <br>
+40049853 <br>
+noamanfawaz@hotmail.com <br>
 
