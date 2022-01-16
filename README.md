@@ -3,8 +3,8 @@ Find the project description in Documentation/coen366_projectdescription
 
 ## Programs Used 
 <ins>IDE</ins> : IntelliJ IDEA <br>
-<ins>Unit Tests<ins> : JUnit <br>
-<ins>Project Management Tool<ins> : Jira <br> 
+<ins>Unit Tests</ins> : JUnit <br>
+<ins>Project Management Tool</ins> : Jira <br> 
 
 
 ## Contributors
