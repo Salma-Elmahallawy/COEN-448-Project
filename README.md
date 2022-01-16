@@ -1,5 +1,5 @@
 # COEN-448-Project
-Find the project description in Documentation/coen366_projectdescription
+Find the project description in Documentation/COEN448_ProjectDescription
 
 ## Programs Used 
 <ins>IDE</ins> : IntelliJ IDEA <br>
