@@ -1,5 +1,5 @@
 # COEN-448-Project
-Find the project description in Documentation/COEN448_ProjectDescription
+Find the project description in the main folder for specific details about the project
 
 ## Tools
 <ins>IDE</ins> : IntelliJ IDEA <br>
