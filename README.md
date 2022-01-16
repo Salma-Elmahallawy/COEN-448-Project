@@ -1,7 +1,7 @@
 # COEN-448-Project
 Find the project description in Documentation/COEN448_ProjectDescription
 
-## Programs Used 
+## Tools
 <ins>IDE</ins> : IntelliJ IDEA <br>
 <ins>Unit Tests</ins> : JUnit <br>
 <ins>Project Management Tool</ins> : Jira <br> 
