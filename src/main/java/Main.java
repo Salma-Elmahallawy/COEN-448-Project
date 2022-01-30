@@ -44,35 +44,9 @@ public class Main {
             // Removes all spaces and changes all input letters to uppercase then checks with the list of commands available
             if(Arrays.asList(compareCommands).contains(input)){
 
-                if(input.equalsIgnoreCase("U")){ // puts the position of the pen up
-
-                    robot.setPenUp(true);
-
-                }else if(input.equalsIgnoreCase("D")){ // puts the position of the pen down
-
-                    robot.setPenUp(false);
-
-                }else if(input.equalsIgnoreCase("R")){ // turn the robot direction to the right
-
-                    robot.setDirection(robot.getDirection() + 1);
-
-                }else if(input.equalsIgnoreCase("L")){ // turn the robot direction to the left
-
-                    robot.setDirection(robot.getDirection() - 1);
-
-                }else if(input.equalsIgnoreCase("P")){ // prints out the grid into console
-
-                    printGrid(grid , gridSize);
-
-                }else if(input.equalsIgnoreCase("C")){ // prints out the Robot information
-
-                    printRobotInfo();
-
-                }else if(input.equalsIgnoreCase("Q")){ // Quits the program
-
-                    System.out.println("Exiting Program");
+                CommandInput(input, gridSize, grid);
+                if (input.equalsIgnoreCase("Q")) {
                     break;
-
                 }
 
             }else if((input.length() >= 2) && (input.charAt(0) == 'M')){ // moves the robot in the grid s spaces
@@ -269,6 +243,39 @@ public class Main {
                     System.out.println("Invalid move (out of bound)");
                 }
                 break;
+        }
+    }
+
+    public static void CommandInput(String input, int gridSize , int[][] grid){
+        if(input.equalsIgnoreCase("U")){ // puts the position of the pen up
+
+            robot.setPenUp(true);
+
+        }else if(input.equalsIgnoreCase("D")) { // puts the position of the pen down
+
+            robot.setPenUp(false);
+
+        }else if(input.equalsIgnoreCase("R")){ // turn the robot direction to the right
+
+            robot.setDirection(robot.getDirection() + 1);
+
+        }else if(input.equalsIgnoreCase("L")){ // turn the robot direction to the left
+
+            robot.setDirection(robot.getDirection() - 1);
+
+        }else if(input.equalsIgnoreCase("P")){ // prints out the grid into console
+
+            printGrid(grid , gridSize);
+
+        }else if(input.equalsIgnoreCase("C")){ // prints out the Robot information
+
+            printRobotInfo();
+
+        }else if(input.equalsIgnoreCase("Q")){ // Quits the program
+
+            System.out.println("Exiting Program");
+
+
         }
     }
 }
