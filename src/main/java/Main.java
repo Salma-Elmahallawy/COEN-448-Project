@@ -7,6 +7,7 @@ public class Main {
 
     private static final Robot robot = new Robot();
     private static final String[] robotDirection = {"North" , "East" , "South" , "West"};
+    private static int gridSize;
 
     public static void main(String[] args) {
 
@@ -14,9 +15,8 @@ public class Main {
         String[] compareCommands = {"U" , "D" , "R" , "L" , "P" , "C" , "Q" };
         Scanner sc = new Scanner(System.in);
 
-
-        int gridSize;
         int[][] grid;
+
         System.out.println("Enter the size of the square floor: ");
         while(true){
             try{
@@ -52,7 +52,7 @@ public class Main {
                 CommandInput_M(input, gridSize, grid);
 
             }else if((input.length() >= 2) && (input.charAt(0) == 'I')){ // moves the robot in the grid s spaces
-                CommandInput_I(input, gridSize, grid);
+                grid = CommandInput_I(input, grid);
 
             }else{ // loop again if the user input is an invalid command
                 PrintCommands(commands);
@@ -228,14 +228,15 @@ public class Main {
         }
     }
 
-    public static void CommandInput_I(String input, int gridSize, int[][] grid){
+    public static int[][] CommandInput_I(String input, int[][] grid){
         // when the input is M0s
+        int newSize;
         if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
-
             try{
                 if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
-                    gridSize = Integer.parseInt(input.substring(2));
-                    grid = initialize(gridSize);
+                    newSize = Integer.parseInt(input.substring(2));
+                    gridSize = newSize;
+                    return initialize(newSize);
                 }else
                     System.out.println("Invalid Input. Please enter an positive integer value ");
             }catch(NumberFormatException | StringIndexOutOfBoundsException e){
@@ -254,7 +255,7 @@ public class Main {
         }else{
             System.out.println("Invalid Input. Please enter an positive integer value ");
         }
-
+    return grid;
     }
 
     public static void CommandInput(String input, int gridSize , int[][] grid){

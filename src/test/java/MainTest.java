@@ -51,27 +51,35 @@ class MainTest {
 
         outputStreamCaptor_message.reset();
         System.out.println("Current Position: (" + robot.getxPosition() + "," + robot.getyPosition() + ")");
-        Assertions.assertEquals("Current Position: (" + 4 + "," + 3 + ")", outputStreamCaptor_message.toString().trim() );
-        if(robot.isPenUp()) {
-            outputStreamCaptor_message.reset();
-            System.out.println("Pen Position: Up");
-            Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-        }
-        else {
-            outputStreamCaptor_message.reset();
-            System.out.println("Pen Position: Down");
-            Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-        }
+        Assertions.assertEquals("Current Position: (" + 4 + "," + 3 + ")", outputStreamCaptor_message.toString().trim());
 
-        outputStreamCaptor_message.reset();
-        System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-        Assertions.assertEquals("Pen Direction: " + "West", outputStreamCaptor_message.toString().trim());
+        for(int i = 0; i < 4; i++) {
+            if (i == 0){
+                robot.setPenUp(false);
+            }
+            else {
+                robot.setPenUp(true);
+            }
+
+            if (robot.isPenUp()) {
+                outputStreamCaptor_message.reset();
+                System.out.println("Pen Position: Up");
+                Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
+            } else {
+                outputStreamCaptor_message.reset();
+                System.out.println("Pen Position: Down");
+                Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
+            }
+
+            outputStreamCaptor_message.reset();
+            System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
+            Assertions.assertEquals("Pen Direction: " + "West", outputStreamCaptor_message.toString().trim());
+        }
 
     }
 
     @Test
     public void printGrid() {
-
     }
 
     @Test
@@ -213,10 +221,13 @@ class MainTest {
         Scanner scanner = new Scanner(input);
 
         String P_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-        if (P_Input.equalsIgnoreCase("R")){
+        if (P_Input.equalsIgnoreCase("P")){
             main.printGrid(grid, gridSize);
         }
 
+        Assertions.assertEquals(3, gridSize);
+        Assertions.assertEquals(3, grid.length);
+        Assertions.assertEquals(3, grid[0].length);
         Assertions.assertInstanceOf(main.getClass(), main);
     }
 
@@ -224,15 +235,17 @@ class MainTest {
     public void CommandInput_C(){
         Main main = new Main();
         String input = "C";
-
+        boolean function_called = true;
         Scanner scanner = new Scanner(input);
 
         String C_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
         if(C_Input.equalsIgnoreCase("C")){
             main.printRobotInfo();
+            function_called = true;
         }
 
-        Assertions.assertInstanceOf(main.getClass(), main);
+        Assertions.assertEquals("C", C_Input);
+        Assertions.assertTrue(function_called);
     }
 
     @Test
@@ -245,7 +258,7 @@ class MainTest {
         if(Q_Input.equalsIgnoreCase("Q")){
             outputStreamCaptor_message.reset();
             System.out.println("Exiting Program");
-            Assertions.assertEquals("Exiting Program",outputStreamCaptor_message.toString().trim());
+            Assertions.assertEquals("Exiting Program", outputStreamCaptor_message.toString().trim());
         }
     }
 
