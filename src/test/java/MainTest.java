@@ -12,16 +12,18 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MainTest {
 
-    private final PrintStream standardOut_Q_message = System.out;
-    private final PrintStream standardOut_Position_message = System.out;
-    private final PrintStream standardOut_Direction_message = System.out;
-    private final PrintStream standardOut_PenUp_message = System.out;
-    private final PrintStream standardOut_PenDown_message = System.out;
-    private final ByteArrayOutputStream outputStreamCaptor_Q_message = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream outputStreamCaptor_Position_message = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream outputStreamCaptor_Direction_message = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream outputStreamCaptor_PenUp_message = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream outputStreamCaptor_PenDown_message = new ByteArrayOutputStream();
+    private final PrintStream standardOut_message = System.out;
+    private final ByteArrayOutputStream outputStreamCaptor_message = new ByteArrayOutputStream();
+
+    @BeforeEach
+    public void setUpStream(){
+        System.setOut(new PrintStream(outputStreamCaptor_message));
+    }
+
+    @AfterEach
+    public void restoreStream(){
+        System.setOut(standardOut_message);
+    }
 
     @Test
     public void initialize() {
@@ -37,14 +39,6 @@ class MainTest {
         Assertions.assertTrue(robot.isPenUp());
     }
 
-    @BeforeEach
-    public void setUpPrintRobotInfoStreams(){
-        System.setOut(new PrintStream(outputStreamCaptor_Position_message));
-        System.setOut(new PrintStream(outputStreamCaptor_Direction_message));
-        System.setOut(new PrintStream(outputStreamCaptor_PenUp_message));
-        System.setOut(new PrintStream(outputStreamCaptor_PenDown_message));
-    }
-
     @Test
     public void printRobotInfo() {
 
@@ -55,28 +49,24 @@ class MainTest {
         robot.setDirection(3);
         robot.setPenUp(false);
 
+        outputStreamCaptor_message.reset();
         System.out.println("Current Position: (" + robot.getxPosition() + "," + robot.getyPosition() + ")");
-        Assertions.assertEquals("Current Position: (" + robot.getxPosition() + "," + robot.getyPosition() + ")", outputStreamCaptor_Position_message.toString().trim() );
+        Assertions.assertEquals("Current Position: (" + 4 + "," + 3 + ")", outputStreamCaptor_message.toString().trim() );
         if(robot.isPenUp()) {
+            outputStreamCaptor_message.reset();
             System.out.println("Pen Position: Up");
-            Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_PenUp_message.toString().trim());
+            Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
         }
         else {
+            outputStreamCaptor_message.reset();
             System.out.println("Pen Position: Down");
-            Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_PenDown_message.toString().trim());
+            Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
         }
 
+        outputStreamCaptor_message.reset();
         System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-        Assertions.assertEquals("Pen Direction: " + "West", outputStreamCaptor_Direction_message.toString().trim());
+        Assertions.assertEquals("Pen Direction: " + "West", outputStreamCaptor_message.toString().trim());
 
-    }
-
-    @AfterEach
-    public void restorePrintRobotInfoStreams(){
-        System.setOut(standardOut_Position_message);
-        System.setOut(standardOut_Direction_message);
-        System.setOut(standardOut_PenUp_message);
-        System.setOut(standardOut_PenDown_message);
     }
 
     @Test
@@ -245,11 +235,6 @@ class MainTest {
         Assertions.assertInstanceOf(main.getClass(), main);
     }
 
-    @BeforeEach
-    public void setUpQStream(){
-        System.setOut(new PrintStream(outputStreamCaptor_Q_message));
-    }
-
     @Test
     public void CommandInput_Q(){
         String input = "Q";
@@ -258,14 +243,10 @@ class MainTest {
 
         String Q_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
         if(Q_Input.equalsIgnoreCase("Q")){
+            outputStreamCaptor_message.reset();
             System.out.println("Exiting Program");
-            Assertions.assertEquals("Exiting Program",outputStreamCaptor_Q_message.toString().trim());
+            Assertions.assertEquals("Exiting Program",outputStreamCaptor_message.toString().trim());
         }
-    }
-
-    @AfterEach
-    public void restoreQStream(){
-        System.setOut(standardOut_Q_message);
     }
 
     @Test
@@ -281,7 +262,6 @@ class MainTest {
         String I_Input_1 = scanner_1.nextLine().replaceAll("\\s+","").toUpperCase();
         String I_Input_2 = scanner_2.nextLine().replaceAll("\\s+","").toUpperCase();
         if(I_Input_1.equalsIgnoreCase("I") || I_Input_2.equalsIgnoreCase("I0") ){
-
 
         }
     }
