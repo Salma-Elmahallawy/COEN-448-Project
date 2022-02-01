@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -13,16 +14,43 @@ import static org.junit.jupiter.api.Assertions.*;
 class MainTest {
 
     private final PrintStream standardOut_message = System.out;
+    private final PrintStream standardErr_message = System.out;
     private final ByteArrayOutputStream outputStreamCaptor_message = new ByteArrayOutputStream();
+    private final ByteArrayOutputStream errorStreamCaptor_message = new ByteArrayOutputStream();
 
     @BeforeEach
     public void setUpStream(){
         System.setOut(new PrintStream(outputStreamCaptor_message));
+        System.setErr(new PrintStream(errorStreamCaptor_message));
     }
 
     @AfterEach
     public void restoreStream(){
         System.setOut(standardOut_message);
+        System.setErr(standardErr_message);
+
+    }
+
+    @Test
+    public void gridCreation(){
+        String input = "5";
+        int[][] grid = new int[0][];
+
+        try{
+            Scanner scanner = new Scanner(input);
+            int gridSize = scanner.nextInt();
+            if(gridSize > 0)
+                grid = new int[gridSize][gridSize];
+
+            Assertions.assertEquals(5, gridSize);
+            Assertions.assertEquals(5, grid.length);
+            Assertions.assertEquals(5, grid[0].length);
+        }
+        catch (InputMismatchException e){
+            System.out.println("Invalid Input. Please enter an integer value greater than 0");
+            Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0", errorStreamCaptor_message.toString().trim());
+        }
+
     }
 
     @Test
@@ -80,6 +108,62 @@ class MainTest {
 
     @Test
     public void printGrid() {
+        int gridSize = 2;
+        int[][] grid = new int [gridSize][gridSize];
+
+        int ytemp = gridSize - 1 , xtemp = 0;
+
+        outputStreamCaptor_message.reset();
+
+        System.out.print("---+");
+
+        for(int j = 0 ; j < gridSize ; j++){
+            System.out.print("---+");
+        }
+
+        System.out.println();
+
+        for(int i = gridSize - 1 ; i >= 0 ; i--){
+            if(ytemp > 9){
+                System.out.print(ytemp-- + " ");
+
+            }else{
+                System.out.print(ytemp-- + "  ");
+            }
+
+            for(int j = 0 ; j < gridSize ; j++){
+                if(grid[j][i] == 1)
+                    System.out.printf("%-2s%-2s", "|", "*");
+                else
+                    System.out.printf("%-2s%-2s", "|", " ");
+            }
+            System.out.print("|\n---+");
+            for(int j = 0 ; j < gridSize ; j++){
+                System.out.print("---+");
+            }
+
+            System.out.println();
+        }
+
+        System.out.print("     ");
+
+        for(int i = 0 ; i < gridSize ; i++){
+            if(i > 9){
+                System.out.print(xtemp++ + "  ");
+            }else{
+                System.out.print(xtemp++ + "   ");
+            }
+        }
+
+        System.out.println();
+
+        Assertions.assertEquals("---+---+---+\r\n" +
+                "1  |   |   |\r\n" +
+                "---+---+---+\r\n" +
+                "0  |   |   |\r\n" +
+                "---+---+---+\r\n" +
+                "     0   1", outputStreamCaptor_message.toString().trim());
+
     }
 
     @Test
@@ -113,9 +197,10 @@ class MainTest {
 
         if (D_Input.equalsIgnoreCase("D")) {
             robot.setPenUp(false);
+            Assertions.assertFalse(robot.isPenUp());
         }
 
-        Assertions.assertFalse(robot.isPenUp());
+
     }
 
     @Test
@@ -235,7 +320,7 @@ class MainTest {
     public void CommandInput_C(){
         Main main = new Main();
         String input = "C";
-        boolean function_called = true;
+        boolean function_called = false;
         Scanner scanner = new Scanner(input);
 
         String C_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
@@ -265,17 +350,99 @@ class MainTest {
     @Test
     public void CommandInput_I(){
         Robot robot = new  Robot();
+        Main main = new Main();
 
-        String input_1 = "I";
-        String input_2 = "I0";
+        String input1 = "I";
+        String input2 = "I0";
+        String input3 = "I3";
+        String input4 = "I03";
+        int gridSize = 6;
+        int[][] grid = new int[gridSize][gridSize];
+        boolean function_called = false;
 
-        Scanner scanner_1 = new Scanner(input_1);
-        Scanner scanner_2 = new Scanner(input_2);
+        robot.setxPosition(2);
+        robot.setyPosition(1);
+        robot.setDirection(2);
+        robot.setPenUp(false);
 
-        String I_Input_1 = scanner_1.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input_2 = scanner_2.nextLine().replaceAll("\\s+","").toUpperCase();
-        if(I_Input_1.equalsIgnoreCase("I") || I_Input_2.equalsIgnoreCase("I0") ){
+        Scanner scanner1 = new Scanner(input1);
+        Scanner scanner2 = new Scanner(input2);
+        Scanner scanner3 = new Scanner(input3);
+        Scanner scanner4 = new Scanner(input4);
 
+        String I_Input1 = scanner1.nextLine().replaceAll("\\s+","").toUpperCase();
+        String I_Input2 = scanner2.nextLine().replaceAll("\\s+","").toUpperCase();
+        String I_Input3 = scanner3.nextLine().replaceAll("\\s+","").toUpperCase();
+        String I_Input4 = scanner4.nextLine().replaceAll("\\s+","").toUpperCase();
+
+        outputStreamCaptor_message.reset();
+        if(I_Input1.equalsIgnoreCase("I")){
+            System.out.println("Invalid Input. Please enter an positive integer value");
+            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
+            Assertions.assertEquals(6, gridSize);
+            Assertions.assertEquals(6, grid.length);
+            Assertions.assertEquals(6, grid[0].length);
+            Assertions.assertEquals(2, robot.getxPosition());
+            Assertions.assertEquals(1, robot.getyPosition());
+            Assertions.assertEquals(2, robot.getDirection());
+            Assertions.assertFalse(robot.isPenUp());
+
+        }
+
+        outputStreamCaptor_message.reset();
+        if((I_Input2.equalsIgnoreCase("I0")) && (Character.isDigit(input2.charAt(1))) && (input2.charAt(1) == '0')){
+            System.out.println("Invalid Input. Please enter an positive integer value");
+            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
+            Assertions.assertEquals(6, gridSize);
+            Assertions.assertEquals(6, grid.length);
+            Assertions.assertEquals(6, grid[0].length);
+            Assertions.assertEquals(2, robot.getxPosition());
+            Assertions.assertEquals(1, robot.getyPosition());
+            Assertions.assertEquals(2, robot.getDirection());
+            Assertions.assertFalse(robot.isPenUp());
+        }
+
+        if((I_Input3.equalsIgnoreCase("I3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
+            gridSize = Integer.parseInt(input3.substring(1));
+            grid = main.initialize(gridSize);
+            function_called = true;
+
+            if(function_called){
+                robot.setxPosition(0);
+                robot.setyPosition(0);
+                robot.setDirection(0);
+                robot.setPenUp(true);
+            }
+            Assertions.assertEquals(3, gridSize);
+            Assertions.assertEquals(3, grid.length);
+            Assertions.assertEquals(3, grid[0].length);
+            Assertions.assertEquals(0, robot.getxPosition());
+            Assertions.assertEquals(0, robot.getyPosition());
+            Assertions.assertEquals(0, robot.getDirection());
+            Assertions.assertTrue(robot.isPenUp());
+            Assertions.assertTrue(function_called);
+
+        }
+
+        if((I_Input4.equalsIgnoreCase("I03")) && ((Character.isDigit(input4.charAt(1))) && (input4.charAt(1) == '0')) && (Character.isDigit(input4.charAt(2))) && (input4.charAt(2) > '0')){
+            gridSize = Integer.parseInt(input3.substring(1));
+            grid = main.initialize(gridSize);
+            function_called = true;
+
+            if(function_called){
+                robot.setxPosition(0);
+                robot.setyPosition(0);
+                robot.setDirection(0);
+                robot.setPenUp(true);
+            }
+            Assertions.assertEquals(3, gridSize);
+            Assertions.assertEquals(3, grid.length);
+            Assertions.assertEquals(3, grid[0].length);
+            Assertions.assertEquals(0, robot.getxPosition());
+            Assertions.assertEquals(0, robot.getyPosition());
+            Assertions.assertEquals(0, robot.getDirection());
+            Assertions.assertTrue(robot.isPenUp());
+            Assertions.assertTrue(function_called);
         }
     }
 }

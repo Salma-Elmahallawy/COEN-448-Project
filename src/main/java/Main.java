@@ -15,21 +15,14 @@ public class Main {
         String[] compareCommands = {"U" , "D" , "R" , "L" , "P" , "C" , "Q" };
         Scanner sc = new Scanner(System.in);
 
-        int[][] grid;
+        int[][] grid = new int[0][];
 
         System.out.println("Enter the size of the square floor: ");
         while(true){
-            try{
-                gridSize = sc.nextInt();
-                if(gridSize > 0){
-                    grid = initialize(gridSize);
-                    break;
-                }else
-                    throw new InputMismatchException();
-            }catch(InputMismatchException e){
-                System.out.println("Invalid Input. Please enter an integer value greater than 0");
-                sc.next();
-            }
+            grid = gridCreation(grid, sc);
+
+            if(gridSize > 0)
+                break;
         }
 
         sc.nextLine(); // needed to clear the line from the nextInt
@@ -60,6 +53,20 @@ public class Main {
         }
     }
 
+
+    public static int[][] gridCreation(int[][] grid, Scanner sc){
+        try{
+            gridSize = sc.nextInt();
+            if(gridSize > 0){
+                return initialize(gridSize);
+            }else
+                throw new InputMismatchException();
+        }catch(InputMismatchException e){
+            System.out.println("Invalid Input. Please enter an integer value greater than 0");
+            sc.next();
+        }
+        return grid;
+    }
 
     // creates and initializes the grid to zeros, robot to position (0,0) , facing north , and pen up ( called at command I n )
     public static int[][] initialize(int gridSize){
@@ -196,7 +203,7 @@ public class Main {
     }
 
     public static void PrintCommands(String[] commands){
-        System.out.println("Invalid Command. Please use one of the following commands: ");
+        System.out.println("Invalid Command. Please use one of the following commands:");
         for(int i = 0 ; i < commands.length ; i++){
             System.out.println(commands[i]);
         }
@@ -210,9 +217,9 @@ public class Main {
 
                     moveForward(Integer.parseInt(input.substring(2)) , gridSize , grid);
                 }else
-                    System.out.println("Invalid Input. Please enter an positive integer value ");
+                    System.out.println("Invalid Input. Please enter an positive integer value");
             }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-                System.out.println("Invalid Input. Please enter an positive integer value ");
+                System.out.println("Invalid Input. Please enter an positive integer value");
             }
 
         }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
@@ -221,10 +228,10 @@ public class Main {
                 moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);
 
             }catch (NumberFormatException e){
-                System.out.println("Invalid Input. Please enter an positive integer value ");
+                System.out.println("Invalid Input. Please enter an positive integer value");
             }
         }else{
-            System.out.println("Invalid Input. Please enter an positive integer value ");
+            System.out.println("Invalid Input. Please enter an positive integer value");
         }
     }
 
@@ -238,9 +245,9 @@ public class Main {
                     gridSize = newSize;
                     return initialize(newSize);
                 }else
-                    System.out.println("Invalid Input. Please enter an positive integer value ");
+                    System.out.println("Invalid Input. Please enter an positive integer value");
             }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-                System.out.println("Invalid Input. Please enter an positive integer value ");
+                System.out.println("Invalid Input. Please enter an positive integer value");
             }
 
         }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
@@ -250,10 +257,10 @@ public class Main {
                 grid = initialize(gridSize);
 
             }catch (NumberFormatException e){
-                System.out.println("Invalid Input. Please enter an positive integer value ");
+                System.out.println("Invalid Input. Please enter an positive integer value");
             }
         }else{
-            System.out.println("Invalid Input. Please enter an positive integer value ");
+            System.out.println("Invalid Input. Please enter an positive integer value");
         }
     return grid;
     }
