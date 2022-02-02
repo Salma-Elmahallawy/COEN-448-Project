@@ -20,7 +20,6 @@ public class Main {
         System.out.println("Enter the size of the square floor: ");
         while(true){
             grid = gridCreation(grid, sc);
-
             if(gridSize > 0)
                 break;
         }
