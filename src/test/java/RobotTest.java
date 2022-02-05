@@ -9,7 +9,6 @@ class RobotTest {
 
     @Test
     void getxPosition() {
-        //Robot robot = new Robot();
 
         robot.setxPosition(4);
         Assertions.assertEquals(4, robot.getxPosition());
@@ -80,5 +79,4 @@ class RobotTest {
         Assertions.assertEquals(3, robot.getDirection());
         Assertions.assertEquals("West", west);
     }
-
 }

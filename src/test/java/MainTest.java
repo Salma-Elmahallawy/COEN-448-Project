@@ -537,8 +537,7 @@ class MainTest {
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 1:
-
-
+                    outputStreamCaptor_message.reset();
                     robot.setyPosition(4);
                     robot.setPenUp(false);
                     if((robot.getyPosition() - numOfSpaces) >= 0) {
@@ -950,7 +949,7 @@ class MainTest {
             Assertions.assertFalse(robot.isPenUp());
         }
 
-        if((M_Input3.equalsIgnoreCase("M 3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
+        if((M_Input3.equalsIgnoreCase("M3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
 
             main.moveForward(Integer.parseInt(input3.substring(1)), gridSize, grid);
             function_called = true;
@@ -970,7 +969,7 @@ class MainTest {
             function_called = true;
             if(function_called){
                 robot.setyPosition(0);
-                robot.setyPosition(robot.getyPosition() + Integer.parseInt(input3.substring(1)));
+                robot.setyPosition(robot.getyPosition() + Integer.parseInt(input4.substring(1)));
             }
             Assertions.assertEquals(0, robot.getxPosition());
             Assertions.assertEquals(3, robot.getyPosition());
@@ -987,7 +986,7 @@ class MainTest {
 
         String input1 = "I";
         String input2 = "I0";
-        String input3 = "I3";
+        String input3 = "I 3";
         String input4 = "I03";
         int gridSize = 6;
         int[][] grid = new int[gridSize][gridSize];
@@ -1058,7 +1057,7 @@ class MainTest {
         }
 
         if((I_Input4.equalsIgnoreCase("I03")) && ((Character.isDigit(input4.charAt(1))) && (input4.charAt(1) == '0')) && (Character.isDigit(input4.charAt(2))) && (input4.charAt(2) > '0')){
-            gridSize = Integer.parseInt(input3.substring(1));
+            gridSize = Integer.parseInt(input4.substring(1));
             grid = main.initialize(gridSize);
             function_called = true;
 
