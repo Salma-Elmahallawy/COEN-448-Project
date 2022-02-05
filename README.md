@@ -8,14 +8,7 @@ Find the project description in the main folder for specific details about the p
 
 ## Contributors
 Rami Ajam  
-40049357  
-ajam.rami99@gmail.com
-
-Jacob Alfaro Enriquez  
-40095550  
-jacobrodolfo1999@gmail.com  
-
+Jacob Alfaro Enriquez   
 Mohamad-noaman Fawaz <br>
-40049853 <br>
-noamanfawaz@hotmail.com <br>
+
 
