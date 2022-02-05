@@ -1,4 +1,3 @@
-
 import java.util.Arrays;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -7,6 +6,7 @@ public class Main {
 
     private static final Robot robot = new Robot();
     private static final String[] robotDirection = {"North" , "East" , "South" , "West"};
+    private static int gridSize;
 
     public static void main(String[] args) {
 
@@ -14,22 +14,13 @@ public class Main {
         String[] compareCommands = {"U" , "D" , "R" , "L" , "P" , "C" , "Q" };
         Scanner sc = new Scanner(System.in);
 
+        int[][] grid = new int[0][];
 
-        int gridSize;
-        int[][] grid;
         System.out.println("Enter the size of the square floor: ");
         while(true){
-            try{
-                gridSize = sc.nextInt();
-                if(gridSize > 0){
-                    grid = initialize(gridSize);
-                    break;
-                }else
-                    throw new InputMismatchException();
-            }catch(InputMismatchException e){
-                System.out.println("Invalid Input. Please enter an integer value greater than 0");
-                sc.next();
-            }
+            grid = gridCreation(grid, sc);
+            if(gridSize > 0)
+                break;
         }
 
         sc.nextLine(); // needed to clear the line from the nextInt
@@ -43,100 +34,37 @@ public class Main {
 
             // Removes all spaces and changes all input letters to uppercase then checks with the list of commands available
             if(Arrays.asList(compareCommands).contains(input)){
-
-                if(input.equalsIgnoreCase("U")){ // puts the position of the pen up
-
-                    robot.setPenUp(true);
-
-                }else if(input.equalsIgnoreCase("D")){ // puts the position of the pen down
-
-                    robot.setPenUp(false);
-
-                }else if(input.equalsIgnoreCase("R")){ // turn the robot direction to the right
-
-                    robot.setDirection(robot.getDirection() + 1);
-
-                }else if(input.equalsIgnoreCase("L")){ // turn the robot direction to the left
-
-                    robot.setDirection(robot.getDirection() - 1);
-
-                }else if(input.equalsIgnoreCase("P")){ // prints out the grid into console
-
-                    printGrid(grid , gridSize);
-
-                }else if(input.equalsIgnoreCase("C")){ // prints out the Robot information
-
-                    printRobotInfo();
-
-                }else if(input.equalsIgnoreCase("Q")){ // Quits the program
-
-                    System.out.println("Exiting Program");
+                CommandInput(input, gridSize, grid);
+                if (input.equalsIgnoreCase("Q")) {
                     break;
-
                 }
 
             }else if((input.length() >= 2) && (input.charAt(0) == 'M')){ // moves the robot in the grid s spaces
-                // when the input is M0s
-                if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
-                    try{
-                        if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
-
-                            moveForward(Integer.parseInt(input.substring(2)) , gridSize , grid);
-                        }else
-                            System.out.println("Invalid Input. Please enter an positive integer value ");
-                    }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-                        System.out.println("Invalid Input. Please enter an positive integer value ");
-                    }
-
-                }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
-
-                    try{
-                        moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);
-
-                    }catch (NumberFormatException e){
-                        System.out.println("Invalid Input. Please enter an positive integer value ");
-                    }
-                }else{
-                    System.out.println("Invalid Input. Please enter an positive integer value ");
-                }
+                CommandInput_M(input, gridSize, grid);
 
             }else if((input.length() >= 2) && (input.charAt(0) == 'I')){ // moves the robot in the grid s spaces
-
-                // when the input is M0s
-                if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
-
-                    try{
-                        if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
-                            gridSize = Integer.parseInt(input.substring(2));
-                            grid = initialize(gridSize);
-                        }else
-                            System.out.println("Invalid Input. Please enter an positive integer value ");
-                    }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-                        System.out.println("Invalid Input. Please enter an positive integer value ");
-                    }
-
-                }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
-
-                    try{
-                        gridSize = Integer.parseInt(input.substring(1));
-                        grid = initialize(gridSize);
-
-                    }catch (NumberFormatException e){
-                        System.out.println("Invalid Input. Please enter an positive integer value ");
-                    }
-                }else{
-                    System.out.println("Invalid Input. Please enter an positive integer value ");
-                }
+                grid = CommandInput_I(input, grid);
 
             }else{ // loop again if the user input is an invalid command
-                System.out.println("Invalid Command. Please use one of the following commands: ");
-                for(int i = 0 ; i < commands.length ; i++){
-                    System.out.println(commands[i]);
-                }
+                PrintCommands(commands);
             }
         }
     }
 
+
+    public static int[][] gridCreation(int[][] grid, Scanner sc){
+        try{
+            gridSize = sc.nextInt();
+            if(gridSize > 0){
+                return initialize(gridSize);
+            }else
+                throw new InputMismatchException();
+        }catch(InputMismatchException e){
+            System.out.println("Invalid Input. Please enter an integer value greater than 0");
+            sc.next();
+        }
+        return grid;
+    }
 
     // creates and initializes the grid to zeros, robot to position (0,0) , facing north , and pen up ( called at command I n )
     public static int[][] initialize(int gridSize){
@@ -269,6 +197,100 @@ public class Main {
                     System.out.println("Invalid move (out of bound)");
                 }
                 break;
+        }
+    }
+
+    public static void PrintCommands(String[] commands){
+        System.out.println("Invalid Command. Please use one of the following commands:");
+        for(int i = 0 ; i < commands.length ; i++){
+            System.out.println(commands[i]);
+        }
+    }
+
+    public static void CommandInput_M(String input, int gridSize, int[][] grid) {
+        // when the input is M0s
+        if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
+            try{
+                if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
+
+                    moveForward(Integer.parseInt(input.substring(2)) , gridSize , grid);
+                }else
+                    System.out.println("Invalid Input. Please enter an positive integer value");
+            }catch(NumberFormatException | StringIndexOutOfBoundsException e){
+                System.out.println("Invalid Input. Please enter an positive integer value");
+            }
+
+        }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
+
+            try{
+                moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);
+
+            }catch (NumberFormatException e){
+                System.out.println("Invalid Input. Please enter an positive integer value");
+            }
+        }else{
+            System.out.println("Invalid Input. Please enter an positive integer value");
+        }
+    }
+
+    public static int[][] CommandInput_I(String input, int[][] grid){
+        // when the input is M0s
+        int newSize;
+        if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
+            try{
+                if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
+                    newSize = Integer.parseInt(input.substring(2));
+                    gridSize = newSize;
+                    return initialize(newSize);
+                }else
+                    System.out.println("Invalid Input. Please enter an positive integer value");
+            }catch(NumberFormatException | StringIndexOutOfBoundsException e){
+                System.out.println("Invalid Input. Please enter an positive integer value");
+            }
+
+        }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
+
+            try{
+                gridSize = Integer.parseInt(input.substring(1));
+                grid = initialize(gridSize);
+
+            }catch (NumberFormatException e){
+                System.out.println("Invalid Input. Please enter an positive integer value");
+            }
+        }else{
+            System.out.println("Invalid Input. Please enter an positive integer value");
+        }
+    return grid;
+    }
+
+    public static void CommandInput(String input, int gridSize , int[][] grid){
+        if(input.equalsIgnoreCase("U")){ // puts the position of the pen up
+
+            robot.setPenUp(true);
+
+        }else if(input.equalsIgnoreCase("D")) { // puts the position of the pen down
+
+            robot.setPenUp(false);
+
+        }else if(input.equalsIgnoreCase("R")){ // turn the robot direction to the right
+
+            robot.setDirection(robot.getDirection() + 1);
+
+        }else if(input.equalsIgnoreCase("L")){ // turn the robot direction to the left
+
+            robot.setDirection(robot.getDirection() - 1);
+
+        }else if(input.equalsIgnoreCase("P")){ // prints out the grid into console
+
+            printGrid(grid , gridSize);
+
+        }else if(input.equalsIgnoreCase("C")){ // prints out the Robot information
+
+            printRobotInfo();
+
+        }else if(input.equalsIgnoreCase("Q")){ // Quits the program
+
+            System.out.println("Exiting Program");
         }
     }
 }
