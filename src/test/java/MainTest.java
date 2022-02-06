@@ -6,8 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -236,59 +235,77 @@ class MainTest {
     public void printGrid() {
         int gridSize = 2;
         int[][] grid = new int [gridSize][gridSize];
+        grid[1][1] = 1 ;
+        List<String> list = new ArrayList<>();
 
         int ytemp = gridSize - 1 , xtemp = 0;
 
         outputStreamCaptor_message.reset();
 
         System.out.print("---+");
+        list.add("---+");
 
         for(int j = 0 ; j < gridSize ; j++){
             System.out.print("---+");
+            list.add("---+");
         }
 
         System.out.println();
+        list.add("\n");
 
         for(int i = gridSize - 1 ; i >= 0 ; i--){
             if(ytemp > 9){
-                System.out.print(ytemp-- + " ");
+                System.out.print(ytemp + " ");
+                list.add(ytemp-- + " ");
 
             }else{
-                System.out.print(ytemp-- + "  ");
+                System.out.print(ytemp + "  ");
+                list.add(ytemp-- + "  ");
             }
 
-            for(int j = 0 ; j < gridSize ; j++){
-                if(grid[j][i] == 1)
+            for(int j = 0 ; j < gridSize ; j++) {
+                if (grid[j][i] == 1) {
                     System.out.printf("%-2s%-2s", "|", "*");
-                else
+                    list.add("|*");
+                }else {
                     System.out.printf("%-2s%-2s", "|", " ");
+                    list.add("| ");
+                }
             }
             System.out.print("|\n---+");
+            list.add("|\n---+");
             for(int j = 0 ; j < gridSize ; j++){
                 System.out.print("---+");
+                list.add("---+");
             }
 
             System.out.println();
+            list.add("\n");
         }
 
         System.out.print("     ");
+        list.add("     ");
 
         for(int i = 0 ; i < gridSize ; i++){
             if(i > 9){
-                System.out.print(xtemp++ + "  ");
+                System.out.print(xtemp + "  ");
+                list.add(xtemp++ + "  ");
             }else{
-                System.out.print(xtemp++ + "   ");
+                System.out.print(xtemp + "   ");
+                list.add(xtemp++ + "   ");
             }
         }
 
         System.out.println();
+        list.add("\n");
 
-        Assertions.assertEquals("---+---+---+\r\n" +
-                "1  |   |   |\r\n" +
-                "---+---+---+\r\n" +
-                "0  |   |   |\r\n" +
-                "---+---+---+\r\n" +
-                "     0   1", outputStreamCaptor_message.toString().trim());
+        Assertions.assertEquals("[---+, ---+, ---+, \n" +
+                ", 1  , | , |*, |\n" +
+                "---+, ---+, ---+, \n" +
+                ", 0  , | , | , |\n" +
+                "---+, ---+, ---+, \n" +
+                ",      , 0   , 1   , \n" +
+                "]", list.toString());
     }
 
     @Test
@@ -880,7 +897,7 @@ class MainTest {
     @Test
     public void PrintInvalidCommand(){
         String[] commands = {"U" , "D" , "R" , "L" , "M s OR M0s" , "P" , "C" , "Q" , "I s or I0s"};
-
+        String[] list = new String[9];
         outputStreamCaptor_message.reset();
         System.out.println("Invalid Command. Please use one of the following commands:");
         Assertions.assertEquals("Invalid Command. Please use one of the following commands:", outputStreamCaptor_message.toString().trim());
@@ -888,16 +905,9 @@ class MainTest {
         outputStreamCaptor_message.reset();
         for(int i = 0 ; i < commands.length ; i++){
             System.out.println(commands[i]);
+            list[i] = commands[i];
         }
-        Assertions.assertEquals("U" +
-                "\nD" +
-                "\nR" +
-                "\nL" +
-                "\nM s OR M0s" +
-                "\nP" +
-                "\nC" +
-                "\nQ" +
-                "\nI s or I0s", outputStreamCaptor_message.toString().trim());
+        Assertions.assertArrayEquals(commands, list);
     }
 
     @Test
