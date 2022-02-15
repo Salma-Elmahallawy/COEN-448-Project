@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final Robot robot = new Robot();
+    public static final Robot robot = new Robot();
     private static final String[] robotDirection = {"North" , "East" , "South" , "West"};
     private static int gridSize;
 
@@ -17,11 +17,9 @@ public class Main {
         int[][] grid = new int[0][];
 
         System.out.println("Enter the size of the square floor: ");
-        while(true){
+        do {
             grid = gridCreation(grid, sc);
-            if(gridSize > 0)
-                break;
-        }
+        } while (gridSize <= 0);
 
         sc.nextLine(); // needed to clear the line from the nextInt
 
@@ -61,7 +59,7 @@ public class Main {
                 throw new InputMismatchException();
         }catch(InputMismatchException e){
             System.out.println("Invalid Input. Please enter an integer value greater than 0");
-            sc.next();
+            //sc.next();
         }
         return grid;
     }
@@ -222,7 +220,7 @@ public class Main {
 
         }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
 
-            try{
+           try{
                 moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);
 
             }catch (NumberFormatException e){

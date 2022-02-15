@@ -734,16 +734,9 @@ class MainTest {
     @Test
     public void CommandInput_U() {
 
-        Robot robot = new Robot();
         String input = "U";
-        Scanner scanner = new Scanner(input);
-
-        String U_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-
-        if (U_Input.equalsIgnoreCase("U")) {
-            robot.setPenUp(true);
-            Assertions.assertTrue(robot.isPenUp());
-        }
+        Main.CommandInput(input, 5, new int[5][5]);
+        Assertions.assertTrue(Main.robot.isPenUp());
     }
 
     @Test
