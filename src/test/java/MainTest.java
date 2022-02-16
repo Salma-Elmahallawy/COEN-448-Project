@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -175,6 +176,20 @@ class MainTest {
     public void printGrid() throws IOException {
 
         outputStreamCaptor_message.reset();
+        ByteArrayOutputStream bs = new ByteArrayOutputStream();
+
+        String temp = """
+                            ---+---+---+\r
+                            1  |   |   |
+                            ---+---+---+\r
+                            0  |   |   |
+                            ---+---+---+\r
+                                 0   1   \r
+                            """;
+
+        byte[] byteTemp = temp.getBytes(StandardCharsets.UTF_8);
+
+        bs.write(byteTemp);
 
         for(int i = 0; i < 3; i++){
             switch (i){
@@ -659,174 +674,133 @@ class MainTest {
     @Test
     public void CommandInput_M(){
 
+        //Invalid Inputs
         String input1 = "M";
         String input2 = "M0";
-        String input3 = "M 3";
-        String input4 = "M03";
+        String input3 = "m0s";
+        String input4 = "m1s";
+        String input5 = "m01s";
 
-        int gridSize = 6;
-        int[][] grid = new int[gridSize][gridSize];
-        boolean function_called = false;
-
-        robot.setxPosition(0);
-        robot.setyPosition(0);
-        robot.setDirection(0);
-        robot.setPenUp(false);
-
-        Scanner scanner1 = new Scanner(input1);
-        Scanner scanner2 = new Scanner(input2);
-        Scanner scanner3 = new Scanner(input3);
-        Scanner scanner4 = new Scanner(input4);
-
-        String M_Input1 = scanner1.nextLine().replaceAll("\\s+","").toUpperCase();
-        String M_Input2 = scanner2.nextLine().replaceAll("\\s+","").toUpperCase();
-        String M_Input3 = scanner3.nextLine().replaceAll("\\s+","").toUpperCase();
-        String M_Input4 = scanner4.nextLine().replaceAll("\\s+","").toUpperCase();
+        //Valid Inputs
+        String input6 = "M 3";
+        String input7 = "M03";
 
         outputStreamCaptor_message.reset();
-        if(M_Input1.equalsIgnoreCase("M")){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-        }
 
-        outputStreamCaptor_message.reset();
-        if((M_Input2.equalsIgnoreCase("M0")) && (Character.isDigit(input2.charAt(1))) && (input2.charAt(1) == '0')){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-        }
+        for(int i = 1; i < 8; i++){
+            switch (i){
+                case 1:
+                    //Main.CommandInput_M(input1, 5, new int[5][5]);
+                    Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
+                        Main.CommandInput_M(input1, 5, new int [5][5]);
+                    });
+                    outputStreamCaptor_message.reset();
 
-        if((M_Input3.equalsIgnoreCase("M3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
+                case 2:
+                    Main.CommandInput_M(input2, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
 
-            main.moveForward(Integer.parseInt(input3.substring(1)), gridSize, grid);
-            function_called = true;
-            if(function_called) {
-                robot.setyPosition(0);
-                robot.setyPosition(robot.getyPosition() + Integer.parseInt(input3.substring(1)));
+                case 3:
+                    Main.CommandInput_M(input3, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, ()-> {
+                        Integer.parseInt(input3.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 4:
+                    Main.CommandInput_M(input4, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, ()-> {
+                        Integer.parseInt(input4.substring(1));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 5:
+                    Main.CommandInput_M(input5, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, ()-> {
+                        Integer.parseInt(input5.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 6:
+                    Main.CommandInput_M(input6, 5, new int[5][5]);
+                    //mockito
+                    outputStreamCaptor_message.reset();
+
+                case 7:
+                    Main.CommandInput_M(input7, 5, new int[5][5]);
+                    //mockito
+                    outputStreamCaptor_message.reset();
             }
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(3, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-            Assertions.assertTrue(function_called);
         }
 
-        if((M_Input4.equalsIgnoreCase("M03")) && ((Character.isDigit(input4.charAt(1))) && (input4.charAt(1) == '0')) && (Character.isDigit(input4.charAt(2))) && (input4.charAt(2) > '0')){
-            main.moveForward(Integer.parseInt(input4.substring(1)), gridSize, grid);
-            function_called = true;
-            if(function_called){
-                robot.setyPosition(0);
-                robot.setyPosition(robot.getyPosition() + Integer.parseInt(input4.substring(1)));
-            }
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(3, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-            Assertions.assertTrue(function_called);
-        }
     }
 
     @Test
     public void CommandInput_I() {
 
+        //Invalid Inputs
         String input1 = "I";
         String input2 = "I0";
-        String input3 = "I 3";
-        String input4 = "I03";
-        int gridSize = 6;
-        int[][] grid = new int[gridSize][gridSize];
-        boolean function_called = false;
+        String input3 = "i0s";
+        String input4 = "i1s";
+        String input5 = "i01s";
 
-        robot.setxPosition(2);
-        robot.setyPosition(1);
-        robot.setDirection(2);
-        robot.setPenUp(false);
-
-        Scanner scanner1 = new Scanner(input1);
-        Scanner scanner2 = new Scanner(input2);
-        Scanner scanner3 = new Scanner(input3);
-        Scanner scanner4 = new Scanner(input4);
-
-        String I_Input1 = scanner1.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input2 = scanner2.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input3 = scanner3.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input4 = scanner4.nextLine().replaceAll("\\s+","").toUpperCase();
+        //Valid Inputs
+        String input6 = "I 3";
+        String input7 = "I03";
 
         outputStreamCaptor_message.reset();
-        if(I_Input1.equalsIgnoreCase("I")){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(6, gridSize);
-            Assertions.assertEquals(6, grid.length);
-            Assertions.assertEquals(6, grid[0].length);
-            Assertions.assertEquals(2, robot.getxPosition());
-            Assertions.assertEquals(1, robot.getyPosition());
-            Assertions.assertEquals(2, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
 
-        }
+        for (int i = 1; i < 8; i++) {
+            switch (i) {
+                case 1:
+                    Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
+                        Main.CommandInput_I(input1, new int [5][5]);
+                    });
+                    outputStreamCaptor_message.reset();
 
-        outputStreamCaptor_message.reset();
-        if((I_Input2.equalsIgnoreCase("I0")) && (Character.isDigit(input2.charAt(1))) && (input2.charAt(1) == '0')){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(6, gridSize);
-            Assertions.assertEquals(6, grid.length);
-            Assertions.assertEquals(6, grid[0].length);
-            Assertions.assertEquals(2, robot.getxPosition());
-            Assertions.assertEquals(1, robot.getyPosition());
-            Assertions.assertEquals(2, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-        }
+                case 2:
+                    Main.CommandInput_I(input2, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
 
-        if((I_Input3.equalsIgnoreCase("I3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
-            gridSize = Integer.parseInt(input3.substring(1));
-            grid = main.initialize(gridSize);
-            function_called = true;
+                case 3:
+                    Main.CommandInput_I(input3, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, () -> {
+                        Integer.parseInt(input3.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
 
-            if(function_called){
-                robot.setxPosition(0);
-                robot.setyPosition(0);
-                robot.setDirection(0);
-                robot.setPenUp(true);
+                case 4:
+                    Main.CommandInput_I(input4, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, () -> {
+                        Integer.parseInt(input4.substring(1));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 5:
+                    Main.CommandInput_I(input5, new int [5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, () -> {
+                        Integer.parseInt(input5.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 6:
+                    Main.CommandInput_I(input6, new int[5][5]);
+                    //mockito
+                    outputStreamCaptor_message.reset();
+                case 7:
+                    Main.CommandInput_I(input7, new int[5][5]);
+                    //mockito
+                    outputStreamCaptor_message.reset();
             }
-            Assertions.assertEquals(3, gridSize);
-            Assertions.assertEquals(3, grid.length);
-            Assertions.assertEquals(3, grid[0].length);
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertTrue(robot.isPenUp());
-            Assertions.assertTrue(function_called);
-
-        }
-
-        if((I_Input4.equalsIgnoreCase("I03")) && ((Character.isDigit(input4.charAt(1))) && (input4.charAt(1) == '0')) && (Character.isDigit(input4.charAt(2))) && (input4.charAt(2) > '0')){
-            gridSize = Integer.parseInt(input4.substring(1));
-            grid = main.initialize(gridSize);
-            function_called = true;
-
-            if(function_called){
-                robot.setxPosition(0);
-                robot.setyPosition(0);
-                robot.setDirection(0);
-                robot.setPenUp(true);
-            }
-            Assertions.assertEquals(3, gridSize);
-            Assertions.assertEquals(3, grid.length);
-            Assertions.assertEquals(3, grid[0].length);
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertTrue(robot.isPenUp());
-            Assertions.assertTrue(function_called);
         }
     }
 }
