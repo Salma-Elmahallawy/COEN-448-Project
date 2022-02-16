@@ -7,14 +7,13 @@ public class Main {
     public static final Robot robot = new Robot();
     private static final String[] robotDirection = {"North" , "East" , "South" , "West"};
     private static int gridSize;
+    private static int[][] grid;
 
     public static void main(String[] args) {
 
         String[] commands = {"U" , "D" , "R" , "L" , "M s OR M0s" , "P" , "C" , "Q" , "I s or I0s"};
         String[] compareCommands = {"U" , "D" , "R" , "L" , "P" , "C" , "Q" };
         Scanner sc = new Scanner(System.in);
-
-        int[][] grid = new int[0][];
 
         System.out.println("Enter the size of the square floor: ");
         do {
@@ -49,6 +48,17 @@ public class Main {
         }
     }
 
+    public static int getGridSize() {
+        return gridSize;
+    }
+
+    public static int[][] getGrid() {
+        return grid;
+    }
+
+    public static void setGrid(int[][] grid) {
+        Main.grid = grid;
+    }
 
     public static int[][] gridCreation(int[][] grid, Scanner sc){
         try{
@@ -56,7 +66,8 @@ public class Main {
             if(gridSize > 0){
                 return initialize(gridSize);
             }else
-                throw new InputMismatchException();
+                //throw new InputMismatchException();
+                System.out.println("Invalid Input. Please enter an integer value greater than 0");
         }catch(InputMismatchException e){
             System.out.println("Invalid Input. Please enter an integer value greater than 0");
             //sc.next();
@@ -200,8 +211,8 @@ public class Main {
 
     public static void PrintCommands(String[] commands){
         System.out.println("Invalid Command. Please use one of the following commands:");
-        for(int i = 0 ; i < commands.length ; i++){
-            System.out.println(commands[i]);
+        for (String command : commands) {
+            System.out.println(command);
         }
     }
 
