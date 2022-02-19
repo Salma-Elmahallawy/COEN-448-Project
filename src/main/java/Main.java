@@ -4,9 +4,10 @@ import java.util.Scanner;
 
 public class Main {
 
-    private static final Robot robot = new Robot();
+    public static final Robot robot = new Robot();
     private static final String[] robotDirection = {"North" , "East" , "South" , "West"};
     private static int gridSize;
+    private static int[][] grid;
 
     public static void main(String[] args) {
 
@@ -14,14 +15,10 @@ public class Main {
         String[] compareCommands = {"U" , "D" , "R" , "L" , "P" , "C" , "Q" };
         Scanner sc = new Scanner(System.in);
 
-        int[][] grid = new int[0][];
-
         System.out.println("Enter the size of the square floor: ");
-        while(true){
+        do {
             grid = gridCreation(grid, sc);
-            if(gridSize > 0)
-                break;
-        }
+        } while (gridSize <= 0);
 
         sc.nextLine(); // needed to clear the line from the nextInt
 
@@ -51,6 +48,17 @@ public class Main {
         }
     }
 
+    public static int getGridSize() {
+        return gridSize;
+    }
+
+    public static int[][] getGrid() {
+        return grid;
+    }
+
+    public static void setGrid(int[][] grid) {
+        Main.grid = grid;
+    }
 
     public static int[][] gridCreation(int[][] grid, Scanner sc){
         try{
@@ -58,10 +66,11 @@ public class Main {
             if(gridSize > 0){
                 return initialize(gridSize);
             }else
-                throw new InputMismatchException();
+                //throw new InputMismatchException();
+                System.out.println("Invalid Input. Please enter an integer value greater than 0");
         }catch(InputMismatchException e){
             System.out.println("Invalid Input. Please enter an integer value greater than 0");
-            sc.next();
+            //sc.next();
         }
         return grid;
     }
@@ -131,79 +140,65 @@ public class Main {
 
     public static void moveForward(int numOfSpaces , int gridSize , int[][] grid){
 
-        switch(((robot.getDirection()%4) + 4) % 4){
-            case 0: // facing north -> so we add to the yPosition
-
-                if((robot.getyPosition() + numOfSpaces) < gridSize) {
-                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                        for(int i = 0; i <= numOfSpaces; i++) {
-                            grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
-                        }
-                        robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                    }else{ // robot moves normally without tracing
-                        robot.setyPosition(robot.getyPosition() + numOfSpaces);
+        if((((robot.getDirection()%4) + 4) % 4) == 0){ // facing north -> so we add to the yPosition
+            if((robot.getyPosition() + numOfSpaces) < gridSize) {
+                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
+                    for(int i = 0; i <= numOfSpaces; i++) {
+                        grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
                     }
-                }else {
-                    System.out.println("Invalid move (out of bound)");
+                    robot.setyPosition(robot.getyPosition() + numOfSpaces);
+                }else{ // robot moves normally without tracing
+                    robot.setyPosition(robot.getyPosition() + numOfSpaces);
                 }
-                break;
-
-            case 1: // facing east -> so we add to the xPosition
-
-                if((robot.getxPosition() + numOfSpaces) < gridSize) {
-                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                        for(int i = 0; i <= numOfSpaces; i++) {
-                            grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
-                        }
-                        robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                    }else{ // robot moves normally without tracing
-                        robot.setxPosition(robot.getxPosition() + numOfSpaces);
+            }else {
+                System.out.println("Invalid move (out of bound)");
+            }
+        }else if((((robot.getDirection()%4) + 4) % 4) == 1) { // facing east -> so we add to the xPosition
+            if((robot.getxPosition() + numOfSpaces) < gridSize) {
+                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
+                    for(int i = 0; i <= numOfSpaces; i++) {
+                        grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
                     }
-                }else{
-                    System.out.println("Invalid move (out of bound)");
+                    robot.setxPosition(robot.getxPosition() + numOfSpaces);
+                }else{ // robot moves normally without tracing
+                    robot.setxPosition(robot.getxPosition() + numOfSpaces);
                 }
-                break;
-
-
-            case 2:// facing south -> so we subtract from the yPosition
-
-                if((robot.getyPosition() - numOfSpaces) >= 0) {
-                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                        for(int i = 0; i <= numOfSpaces; i++) {
-                            grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
-                        }
-                        robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                    }else{ // robot moves normally without tracing
-                        robot.setyPosition(robot.getyPosition() - numOfSpaces);
+            }else{
+                System.out.println("Invalid move (out of bound)");
+            }
+        }else if((((robot.getDirection()%4) + 4) % 4) == 2) { // facing south -> so we subtract from the yPosition
+            if((robot.getyPosition() - numOfSpaces) >= 0) {
+                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
+                    for(int i = 0; i <= numOfSpaces; i++) {
+                        grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
                     }
-                }else {
-                    System.out.println("Invalid move (out of bound)");
+                    robot.setyPosition(robot.getyPosition() - numOfSpaces);
+                }else{ // robot moves normally without tracing
+                    robot.setyPosition(robot.getyPosition() - numOfSpaces);
                 }
-                break;
-
-
-            case 3:// facing west -> so we subtract from the xPosition
-
-                if((robot.getxPosition() - numOfSpaces) >= 0) {
-                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                        for(int i = 0; i <= numOfSpaces; i++) {
-                            grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
-                        }
-                        robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                    }else{ // robot moves normally without tracing
-                        robot.setxPosition(robot.getxPosition() - numOfSpaces);
+            }else {
+                System.out.println("Invalid move (out of bound)");
+            }
+        }else{ // facing west -> so we subtract from the xPosition
+            if((robot.getxPosition() - numOfSpaces) >= 0) {
+                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
+                    for(int i = 0; i <= numOfSpaces; i++) {
+                        grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
                     }
-                }else{
-                    System.out.println("Invalid move (out of bound)");
+                    robot.setxPosition(robot.getxPosition() - numOfSpaces);
+                }else{ // robot moves normally without tracing
+                    robot.setxPosition(robot.getxPosition() - numOfSpaces);
                 }
-                break;
+            }else{
+                System.out.println("Invalid move (out of bound)");
+            }
         }
     }
 
     public static void PrintCommands(String[] commands){
         System.out.println("Invalid Command. Please use one of the following commands:");
-        for(int i = 0 ; i < commands.length ; i++){
-            System.out.println(commands[i]);
+        for (String command : commands) {
+            System.out.println(command);
         }
     }
 
@@ -220,9 +215,9 @@ public class Main {
                 System.out.println("Invalid Input. Please enter an positive integer value");
             }
 
-        }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
+        }else if(Character.isDigit(input.charAt(1))){ // when the input is M s
 
-            try{
+           try{
                 moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);
 
             }catch (NumberFormatException e){
@@ -234,21 +229,19 @@ public class Main {
     }
 
     public static int[][] CommandInput_I(String input, int[][] grid){
-        // when the input is M0s
-        int newSize;
+        // when the input is I0s
         if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
             try{
                 if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
-                    newSize = Integer.parseInt(input.substring(2));
-                    gridSize = newSize;
-                    return initialize(newSize);
+                    gridSize = Integer.parseInt(input.substring(2));
+                    return initialize(gridSize);
                 }else
                     System.out.println("Invalid Input. Please enter an positive integer value");
             }catch(NumberFormatException | StringIndexOutOfBoundsException e){
                 System.out.println("Invalid Input. Please enter an positive integer value");
             }
 
-        }else if((Character.isDigit(input.charAt(1))) && (input.charAt(1) > '0')){ // when the input is M s
+        }else if(Character.isDigit(input.charAt(1))){ // when the input is I s
 
             try{
                 gridSize = Integer.parseInt(input.substring(1));
@@ -291,6 +284,11 @@ public class Main {
         }else if(input.equalsIgnoreCase("Q")){ // Quits the program
 
             System.out.println("Exiting Program");
+
+        }else{
+
+            System.out.println("Wrong Command Input");
+
         }
     }
 }

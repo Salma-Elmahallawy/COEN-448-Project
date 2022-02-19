@@ -4,10 +4,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,365 +34,202 @@ class MainTest {
 
     @Test
     public void gridCreation(){
-        String input = "";
-        int[][] grid = new int[0][];
 
-        for (int i = 0; i < 2; i++){
-            if (i == 0)
-                input = "5";
-            else
-                input = "notaNumber";
+        for (int i = 0; i < 3; i++){
+            outputStreamCaptor_message.reset();
+            switch (i){
+                case 0:
+                    Scanner sc = new Scanner("5");
+                    Main.setGrid(Main.gridCreation(Main.getGrid(), sc));
+                    Assertions.assertEquals(5, Main.getGridSize());
+                    Assertions.assertEquals(5, Main.getGrid().length);
+                    Assertions.assertEquals(5, Main.getGrid()[0].length);
 
-            try{
-                Scanner scanner = new Scanner(input);
-                int gridSize = scanner.nextInt();
-                if(gridSize > 0)
-                    grid = new int[gridSize][gridSize];
+                case 1:
+                    Scanner sc2 = new Scanner("wrong input");
+                    Main.gridCreation(Main.getGrid(), sc2);
+                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
 
-                Assertions.assertEquals(5, gridSize);
-                Assertions.assertEquals(5, grid.length);
-                Assertions.assertEquals(5, grid[0].length);
-            }
-            catch (InputMismatchException e){
-                outputStreamCaptor_message.reset();
-                System.out.println("Invalid Input. Please enter an integer value greater than 0");
-                Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0", outputStreamCaptor_message.toString().trim() );
-                Assertions.assertThrows(InputMismatchException.class, ()-> {
-                    Scanner scanner = new Scanner("not a number");
-                    scanner.nextInt();
-                });
-                Assertions.assertEquals("notaNumber", input);
+                case 2:
+                    Scanner sc3 = new Scanner("0");
+                    Main.gridCreation(Main.getGrid(), sc3);
+                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
             }
         }
     }
 
     @Test
     public void initialize() {
-        Robot robot = new Robot();
-        robot.setxPosition(0);
-        robot.setyPosition(0);
-        robot.setDirection(0);
-        robot.setPenUp(true);
+        Main.initialize(5);
 
-        Assertions.assertEquals(robot.getxPosition(), 0);
-        Assertions.assertEquals(robot.getyPosition(), 0);
-        Assertions.assertEquals(robot.getDirection(), 0);
-        Assertions.assertTrue(robot.isPenUp());
+        Assertions.assertEquals(Main.robot.getxPosition(), 0);
+        Assertions.assertEquals(Main.robot.getyPosition(), 0);
+        Assertions.assertEquals(Main.robot.getDirection(), 0);
+        Assertions.assertTrue(Main.robot.isPenUp());
     }
 
     @Test
     public void printRobotInfo() {
 
-        Robot robot = new Robot();
-        String[] robotDirection = {"North", "East", "South", "West"};
-        robot.setyPosition(3);
-        robot.setxPosition(4);
+        Main.robot.setyPosition(3);
+        Main.robot.setxPosition(4);
 
         outputStreamCaptor_message.reset();
-        System.out.println("Current Position: (" + robot.getxPosition() + "," + robot.getyPosition() + ")");
-        Assertions.assertEquals("Current Position: (" + 4 + "," + 3 + ")", outputStreamCaptor_message.toString().trim());
 
         for(int i = 0; i < 8; i++) {
             switch (i){
                 case 0:
-                    robot.setPenUp(true);
-                    robot.setDirection(0);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(true);
+                    Main.robot.setDirection(0);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Up\r
+                            Pen Direction: North\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "North", outputStreamCaptor_message.toString().trim());
 
                 case 1:
-                    robot.setPenUp(true);
-                    robot.setDirection(1);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(true);
+                    Main.robot.setDirection(1);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Up\r
+                            Pen Direction: East\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "East", outputStreamCaptor_message.toString().trim());
 
                 case 2:
-                    robot.setPenUp(true);
-                    robot.setDirection(2);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(true);
+                    Main.robot.setDirection(2);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Up\r
+                            Pen Direction: South\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "South", outputStreamCaptor_message.toString().trim());
 
                 case 3:
-                    robot.setPenUp(true);
-                    robot.setDirection(3);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(true);
+                    Main.robot.setDirection(3);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Up\r
+                            Pen Direction: West\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "West", outputStreamCaptor_message.toString().trim());
 
                 case 4:
-                    robot.setPenUp(false);
-                    robot.setDirection(0);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(false);
+                    Main.robot.setDirection(0);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Down\r
+                            Pen Direction: North\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "North", outputStreamCaptor_message.toString().trim());
 
                 case 5:
-                    robot.setPenUp(false);
-                    robot.setDirection(1);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(false);
+                    Main.robot.setDirection(1);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Down\r
+                            Pen Direction: East\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "East", outputStreamCaptor_message.toString().trim());
 
                 case 6:
-                    robot.setPenUp(false);
-                    robot.setDirection(2);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(false);
+                    Main.robot.setDirection(2);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Down\r
+                            Pen Direction: South\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "South", outputStreamCaptor_message.toString().trim());
 
                 case 7:
-                    robot.setPenUp(false);
-                    robot.setDirection(3);
-                    if (robot.isPenUp()) {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Up");
-                        Assertions.assertEquals("Pen Position: Up", outputStreamCaptor_message.toString().trim());
-                    } else {
-                        outputStreamCaptor_message.reset();
-                        System.out.println("Pen Position: Down");
-                        Assertions.assertEquals("Pen Position: Down", outputStreamCaptor_message.toString().trim());
-                    }
-
+                    Main.robot.setPenUp(false);
+                    Main.robot.setDirection(3);
+                    Main.printRobotInfo();
+                    Assertions.assertEquals("""
+                            Current Position: (4,3)\r
+                            Pen Position: Down\r
+                            Pen Direction: West\r
+                            """, outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
-                    System.out.println("Pen Direction: " + robotDirection[((robot.getDirection()%4) + 4) % 4]);
-                    Assertions.assertEquals("Pen Direction: " + "West", outputStreamCaptor_message.toString().trim());
             }
         }
-    }
-
-    @Test
-    public void printGrid() {
-        int gridSize = 2;
-        int[][] grid = new int [gridSize][gridSize];
-
-        int ytemp = gridSize - 1 , xtemp = 0;
-
-        outputStreamCaptor_message.reset();
-
-        System.out.print("---+");
-
-        for(int j = 0 ; j < gridSize ; j++){
-            System.out.print("---+");
-        }
-
-        System.out.println();
-
-        for(int i = gridSize - 1 ; i >= 0 ; i--){
-            if(ytemp > 9){
-                System.out.print(ytemp-- + " ");
-
-            }else{
-                System.out.print(ytemp-- + "  ");
-            }
-
-            for(int j = 0 ; j < gridSize ; j++){
-                if(grid[j][i] == 1)
-                    System.out.printf("%-2s%-2s", "|", "*");
-                else
-                    System.out.printf("%-2s%-2s", "|", " ");
-            }
-            System.out.print("|\n---+");
-            for(int j = 0 ; j < gridSize ; j++){
-                System.out.print("---+");
-            }
-
-            System.out.println();
-        }
-
-        System.out.print("     ");
-
-        for(int i = 0 ; i < gridSize ; i++){
-            if(i > 9){
-                System.out.print(xtemp++ + "  ");
-            }else{
-                System.out.print(xtemp++ + "   ");
-            }
-        }
-
-        System.out.println();
-
-        Assertions.assertEquals("---+---+---+\r\n" +
-                "1  |   |   |\r\n" +
-                "---+---+---+\r\n" +
-                "0  |   |   |\r\n" +
-                "---+---+---+\r\n" +
-                "     0   1", outputStreamCaptor_message.toString().trim());
     }
 
     @Test
     public void moveForward_North() {
 
-        Robot robot = new Robot();
         int numOfSpaces = 3;
         int gridSize = 5;
         int[][] grid = new int [gridSize][gridSize];
+        Main.robot.setDirection(0);
 
         for(int n = 0; n < 4; n++) {
-            robot.setxPosition(0);
+            Main.robot.setxPosition(0);
             switch(n){
                 case 0:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(0);
-                    robot.setPenUp(true);
-                    if((robot.getyPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(0);
+                    Main.robot.setPenUp(true);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(3, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
+
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(3, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 1:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(0);
-                    robot.setPenUp(false);
-                    if((robot.getyPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(0);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(3, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(1, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(3, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(1, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 2:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(4);
-                    robot.setPenUp(true);
-                    if((robot.getyPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(4);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(4, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(4, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
 
                 case 3:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(4);
-                    robot.setPenUp(false);
-                    if((robot.getyPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(4);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(4, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(4, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
             }
         }
@@ -400,104 +238,60 @@ class MainTest {
     @Test
     public void moveForward_East() {
 
-        Robot robot = new Robot();
         int numOfSpaces = 3;
         int gridSize = 5;
         int[][] grid = new int [gridSize][gridSize];
+        Main.robot.setDirection(1);
 
         for(int n = 0; n < 4; n++) {
-            robot.setyPosition(0);
+            Main.robot.setyPosition(0);
             switch(n){
                 case 0:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(0);
-                    robot.setPenUp(true);
-                    if((robot.getxPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(0);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(3, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(3, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 1:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(0);
-                    robot.setPenUp(false);
-                    if((robot.getxPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(0);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(3, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(1, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(3, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(1, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 2:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(4);
-                    robot.setPenUp(true);
-                    if((robot.getxPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(4);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(4, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(4, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
 
                 case 3:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(4);
-                    robot.setPenUp(false);
-                    if((robot.getxPosition() + numOfSpaces) < gridSize) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() + numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(4);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(4, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(4, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
             }
         }
@@ -505,104 +299,61 @@ class MainTest {
 
     @Test
     public void moveForward_South(){
-        Robot robot = new Robot();
+
         int numOfSpaces = 3;
         int gridSize = 5;
         int[][] grid = new int [gridSize][gridSize];
+        Main.robot.setDirection(2);
 
         for(int n = 0; n < 4; n++) {
-            robot.setxPosition(0);
+            Main.robot.setxPosition(0);
             switch(n){
                 case 0:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(4);
-                    robot.setPenUp(true);
-                    if((robot.getyPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(4);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(1, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(1, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 1:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(4);
-                    robot.setPenUp(false);
-                    if((robot.getyPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(4);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(1, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(1, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(1, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(1, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 2:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(0);
-                    robot.setPenUp(true);
-                    if((robot.getyPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(0);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
 
                 case 3:
                     outputStreamCaptor_message.reset();
-                    robot.setyPosition(0);
-                    robot.setPenUp(false);
-                    if((robot.getyPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
-                            }
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setyPosition(robot.getyPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setyPosition(0);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
             }
         }
@@ -611,104 +362,60 @@ class MainTest {
     @Test
     public void moveForward_West() {
 
-        Robot robot = new Robot();
         int numOfSpaces = 3;
         int gridSize = 5;
         int[][] grid = new int [gridSize][gridSize];
+        Main.robot.setDirection(3);
 
         for(int n = 0; n < 4; n++) {
-            robot.setyPosition(0);
+            Main.robot.setyPosition(0);
             switch(n){
                 case 0:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(4);
-                    robot.setPenUp(true);
-                    if((robot.getxPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(4);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(1, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(1, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 1:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(4);
-                    robot.setPenUp(false);
-                    if((robot.getxPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(4);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(1, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(1, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(1, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(1, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("", outputStreamCaptor_message.toString().trim());
 
                 case 2:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(0);
-                    robot.setPenUp(true);
-                    if((robot.getxPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(0);
+                    Main.robot.setPenUp(true);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertTrue(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
 
                 case 3:
                     outputStreamCaptor_message.reset();
-                    robot.setxPosition(0);
-                    robot.setPenUp(false);
-                    if((robot.getxPosition() - numOfSpaces) >= 0) {
-                        if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-                            for(int i = 0; i <= numOfSpaces; i++) {
-                                grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
-                            }
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }else{ // robot moves normally without tracing
-                            robot.setxPosition(robot.getxPosition() - numOfSpaces);
-                        }
-                    }else {
-                        System.out.println("Invalid move (out of bound)");
-                    }
+                    Main.robot.setxPosition(0);
+                    Main.robot.setPenUp(false);
+                    Main.moveForward(numOfSpaces, gridSize, grid);
 
-                    Assertions.assertEquals(0, robot.getxPosition());
-                    Assertions.assertEquals(0, robot.getyPosition());
-                    Assertions.assertFalse(robot.isPenUp());
-                    Assertions.assertEquals(0, grid[robot.getxPosition()][robot.getyPosition()]);
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertFalse(Main.robot.isPenUp());
+                    Assertions.assertEquals(0, grid[Main.robot.getxPosition()][Main.robot.getyPosition()]);
                     Assertions.assertEquals("Invalid move (out of bound)", outputStreamCaptor_message.toString().trim());
             }
         }
@@ -717,69 +424,51 @@ class MainTest {
     @Test
     public void CommandInput_U() {
 
-        Robot robot = new Robot();
         String input = "U";
-        Scanner scanner = new Scanner(input);
+        Main.CommandInput(input, 5, new int[5][5]);
+        Assertions.assertTrue(Main.robot.isPenUp());
+    }
 
-        String U_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
+    @Test
+    public void InvalidCommandInput() {
 
-        if (U_Input.equalsIgnoreCase("U")) {
-            robot.setPenUp(true);
-            Assertions.assertTrue(robot.isPenUp());
-        }
+        outputStreamCaptor_message.reset();
+        String input = "K";
+        Main.CommandInput(input, 5, new int[5][5]);
+        Assertions.assertEquals("Wrong Command Input", outputStreamCaptor_message.toString().trim());
     }
 
     @Test
     public void CommandInput_D() {
 
-        Robot robot = new Robot();
         String input = "D";
-        Scanner scanner = new Scanner(input);
-
-        String D_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-
-        if (D_Input.equalsIgnoreCase("D")) {
-            robot.setPenUp(false);
-            Assertions.assertFalse(robot.isPenUp());
-        }
+        Main.CommandInput(input, 5, new int[5][5]);
+        Assertions.assertFalse(Main.robot.isPenUp());
     }
 
     @Test
     public void CommandInput_R() {
 
-        String[] poles = {"North", "East", "South", "West"};
-        Robot robot = new Robot();
         String input = "R";
-        Scanner scanner = new Scanner(input);
 
-        String R_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-        if (R_Input.equalsIgnoreCase("R")) {
-            for (int i = 0; i < 4; i++) {
-                String pole_direction = "";
-                robot.setDirection(i);
-                int direction = robot.getDirection();
-                if (direction == 0) {
-                    robot.setDirection(robot.getDirection() + 1);
-                    pole_direction = poles[(((robot.getDirection() % 4) + 4) % 4)];
-                    Assertions.assertEquals(1, robot.getDirection());
-                    Assertions.assertEquals("East", pole_direction);
-                } else if (direction == 1) {
-                    robot.setDirection(robot.getDirection() + 1);
-                    pole_direction = poles[(((robot.getDirection() % 4) + 4) % 4)];
-                    Assertions.assertEquals(2, robot.getDirection());
-                    Assertions.assertEquals("South", pole_direction);
-                } else if (direction == 2) {
-                    robot.setDirection(robot.getDirection() + 1);
-                    pole_direction = poles[(((robot.getDirection() % 4) + 4) % 4)];
-                    Assertions.assertEquals(3, robot.getDirection());
-                    Assertions.assertEquals("West", pole_direction);
+        for (int i = 0; i < 4; i++) {
+            Main.robot.setDirection(i);
+            switch (i){
+                case 0:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(1, Main.robot.getDirection());
 
-                } else if (direction == 3) {
-                    robot.setDirection(robot.getDirection() + 1);
-                    pole_direction = poles[(((robot.getDirection() % 4) + 4) % 4)];
-                    Assertions.assertEquals(4, robot.getDirection());
-                    Assertions.assertEquals("North", pole_direction);
-                }
+                case 1:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(2, Main.robot.getDirection());
+
+                case 2:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(3, Main.robot.getDirection());
+
+                case 3:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(4, Main.robot.getDirection());
             }
         }
     }
@@ -787,41 +476,26 @@ class MainTest {
     @Test
     public void CommandInput_L() {
 
-        Robot robot = new Robot();
         String input = "L";
-        Scanner scanner = new Scanner(input);
-        String[] poles = {"North", "East", "South", "West"};
 
-        String L_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-        if(L_Input.equalsIgnoreCase("L")){
-            for (int i = 3; i >= 0; i--) {
-                String pole_direction = "";
-                robot.setDirection(i);
-                int direction = robot.getDirection();
-                if (direction == 3){
-                    robot.setDirection(robot.getDirection() - 1);
-                    pole_direction = poles[(((robot.getDirection()%4) + 4) % 4)];
-                    Assertions.assertEquals(2, robot.getDirection());
-                    Assertions.assertEquals("South", pole_direction);
-                }
-                else if (direction == 2){
-                    robot.setDirection(robot.getDirection() - 1);
-                    pole_direction = poles[(((robot.getDirection()%4) + 4) % 4)];
-                    Assertions.assertEquals(1, robot.getDirection());
-                    Assertions.assertEquals("East", pole_direction);
-                }
-                else if (direction == 1){
-                    robot.setDirection(robot.getDirection() - 1);
-                    pole_direction = poles[(((robot.getDirection()%4) + 4) % 4)];
-                    Assertions.assertEquals(0, robot.getDirection());
-                    Assertions.assertEquals("North", pole_direction);
-                }
-                else if (direction == 0){
-                    robot.setDirection(robot.getDirection() - 1);
-                    pole_direction = poles[(((robot.getDirection()%4) + 4) % 4)];
-                    Assertions.assertEquals(-1, robot.getDirection());
-                    Assertions.assertEquals("West", pole_direction);
-                }
+        for (int i = 3; i >= 0; i--) {
+            Main.robot.setDirection(i);
+            switch (i){
+                case 3:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(2, Main.robot.getDirection());
+
+                case 2:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(1, Main.robot.getDirection());
+
+                case 1:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(0, Main.robot.getDirection());
+
+                case 0:
+                    Main.CommandInput(input, 5, new int[5][5]);
+                    Assertions.assertEquals(-1, Main.robot.getDirection());
             }
         }
     }
@@ -829,252 +503,339 @@ class MainTest {
     @Test
     public void CommandInput_P(){
 
-        Main main = new Main();
         String input = "P";
-        int gridSize = 3;
-        int[][] grid = new int [gridSize][gridSize];
+        outputStreamCaptor_message.reset();
 
-        Scanner scanner = new Scanner(input);
+        for(int i = 0; i < 3; i++){
+            switch (i){
+                case 0:
+                    Main.CommandInput(input, 2, new int [2][2]);
+                    Assertions.assertEquals("""
+                            ---+---+---+\r
+                            1  |   |   |
+                            ---+---+---+\r
+                            0  |   |   |
+                            ---+---+---+\r
+                                 0   1   \r
+                            """, outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
 
-        String P_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-        if (P_Input.equalsIgnoreCase("P")){
-            main.printGrid(grid, gridSize);
+                case 1:
+                    int[][] startGrid = new int [2][2];
+                    startGrid[1][1] = 1;
+                    startGrid[0][0] = 1;
+
+                    Main.CommandInput(input, 2, startGrid);
+                    Assertions.assertEquals("""
+                            ---+---+---+\r
+                            1  |   | * |
+                            ---+---+---+\r
+                            0  | * |   |
+                            ---+---+---+\r
+                                 0   1   \r
+                            """, outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+                case 2:
+                    Main.CommandInput(input, 15, new int[15][15]);
+                    Assertions.assertEquals("""
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            14 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            13 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            12 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            11 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            10 |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            9  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            8  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            7  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            6  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            5  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            4  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            3  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            2  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            1  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            0  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+\r
+                                 0   1   2   3   4   5   6   7   8   9   10  11  12  13  14  \r
+                            """, outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
+                case 3:
+                    int[][] starGrid = new int [11][11];
+                    starGrid[1][1] = 1;
+                    starGrid[10][10] = 1;
+
+                    Main.CommandInput(input, 11, starGrid);
+                    Assertions.assertEquals("""
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            10 |   |   |   |   |   |   |   |   |   |   | * |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            9  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            8  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            7  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            6  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            5  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            4  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            3  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            2  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            1  |   | * |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                            0  |   |   |   |   |   |   |   |   |   |   |   |
+                            ---+---+---+---+---+---+---+---+---+---+---+---+\r
+                                 0   1   2   3   4   5   6   7   8   9   10  \r
+                            """, outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+            }
         }
 
-        Assertions.assertEquals(3, gridSize);
-        Assertions.assertEquals(3, grid.length);
-        Assertions.assertEquals(3, grid[0].length);
-        Assertions.assertInstanceOf(main.getClass(), main);
     }
 
     @Test
     public void CommandInput_C(){
-        Main main = new Main();
-        String input = "C";
-        boolean function_called = false;
-        Scanner scanner = new Scanner(input);
 
-        String C_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-        if(C_Input.equalsIgnoreCase("C")){
-            main.printRobotInfo();
-            function_called = true;
-        }
-        Assertions.assertEquals("C", C_Input);
-        Assertions.assertTrue(function_called);
+        outputStreamCaptor_message.reset();
+        String input = "C";
+        Main.robot.setxPosition(0);
+        Main.robot.setyPosition(0);
+        Main.robot.setDirection(0);
+        Main.robot.setPenUp(true);
+        Main.CommandInput(input, 5, new int[5][5]);
+
+        Assertions.assertEquals("""
+                Current Position: (0,0)\r
+                Pen Position: Up\r
+                Pen Direction: North""", outputStreamCaptor_message.toString().trim());
+        Main.robot.setPenUp(false);
+
     }
 
     @Test
     public void CommandInput_Q(){
+
+        outputStreamCaptor_message.reset();
         String input = "Q";
+        Main.CommandInput(input, 5, new int [5][5]);
+        Assertions.assertEquals("Exiting Program", outputStreamCaptor_message.toString().trim());
 
-        Scanner scanner = new Scanner(input);
-
-        String Q_Input = scanner.nextLine().replaceAll("\\s+","").toUpperCase();
-        if(Q_Input.equalsIgnoreCase("Q")){
-            outputStreamCaptor_message.reset();
-            System.out.println("Exiting Program");
-            Assertions.assertEquals("Exiting Program", outputStreamCaptor_message.toString().trim());
-        }
     }
 
     @Test
-    public void PrintInvalidCommand(){
-        String[] commands = {"U" , "D" , "R" , "L" , "M s OR M0s" , "P" , "C" , "Q" , "I s or I0s"};
-
+    public void PrintInvalidCommand() {
+        String[] commands = {"U", "D", "R", "L", "M s OR M0s", "P", "C", "Q", "I s or I0s"};
         outputStreamCaptor_message.reset();
-        System.out.println("Invalid Command. Please use one of the following commands:");
-        Assertions.assertEquals("Invalid Command. Please use one of the following commands:", outputStreamCaptor_message.toString().trim());
-
+        Main.PrintCommands(commands);
+        Assertions.assertEquals("""
+                Invalid Command. Please use one of the following commands:\r
+                U\r
+                D\r
+                R\r
+                L\r
+                M s OR M0s\r
+                P\r
+                C\r
+                Q\r
+                I s or I0s\r
+                """, outputStreamCaptor_message.toString());
         outputStreamCaptor_message.reset();
-        for(int i = 0 ; i < commands.length ; i++){
-            System.out.println(commands[i]);
-        }
-        Assertions.assertEquals("U" +
-                "\nD" +
-                "\nR" +
-                "\nL" +
-                "\nM s OR M0s" +
-                "\nP" +
-                "\nC" +
-                "\nQ" +
-                "\nI s or I0s", outputStreamCaptor_message.toString().trim());
     }
 
     @Test
     public void CommandInput_M(){
-        Robot robot = new  Robot();
-        Main main = new Main();
 
+        Main.robot.setxPosition(0);
+        Main.robot.setyPosition(0);
+        Main.robot.setDirection(0);
+
+        //Invalid Inputs
         String input1 = "M";
-        String input2 = "M0";
-        String input3 = "M 3";
-        String input4 = "M03";
+        String input2 = "M0";// t f
+        String input3 = "m0s";
+        String input4 = "m1s";// t t
+        String input5 = "m01s";
+        String input8 = "Ms";// f f
+        String input9 = "m00";
 
-        int gridSize = 6;
-        int[][] grid = new int[gridSize][gridSize];
-        boolean function_called = false;
-
-        robot.setxPosition(0);
-        robot.setyPosition(0);
-        robot.setDirection(0);
-        robot.setPenUp(false);
-
-        Scanner scanner1 = new Scanner(input1);
-        Scanner scanner2 = new Scanner(input2);
-        Scanner scanner3 = new Scanner(input3);
-        Scanner scanner4 = new Scanner(input4);
-
-        String M_Input1 = scanner1.nextLine().replaceAll("\\s+","").toUpperCase();
-        String M_Input2 = scanner2.nextLine().replaceAll("\\s+","").toUpperCase();
-        String M_Input3 = scanner3.nextLine().replaceAll("\\s+","").toUpperCase();
-        String M_Input4 = scanner4.nextLine().replaceAll("\\s+","").toUpperCase();
+        //Valid Inputs
+        String input6 = "M3";
+        String input7 = "M03";
 
         outputStreamCaptor_message.reset();
-        if(M_Input1.equalsIgnoreCase("M")){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-        }
 
-        outputStreamCaptor_message.reset();
-        if((M_Input2.equalsIgnoreCase("M0")) && (Character.isDigit(input2.charAt(1))) && (input2.charAt(1) == '0')){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-        }
+        for(int i = 1; i < 8; i++){
+            switch (i){
+                case 1:
+                    Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
+                        Main.CommandInput_M(input1, 5, new int [5][5]);
+                    });
+                    outputStreamCaptor_message.reset();
 
-        if((M_Input3.equalsIgnoreCase("M3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
+                case 2:
+                    Main.CommandInput_M(input2, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
 
-            main.moveForward(Integer.parseInt(input3.substring(1)), gridSize, grid);
-            function_called = true;
-            if(function_called) {
-                robot.setyPosition(0);
-                robot.setyPosition(robot.getyPosition() + Integer.parseInt(input3.substring(1)));
+                case 3:
+                    Main.CommandInput_M(input3, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, ()-> {
+                        Integer.parseInt(input3.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 4:
+                    Main.CommandInput_M(input4, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, ()-> {
+                        Integer.parseInt(input4.substring(1));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 5:
+                    Main.CommandInput_M(input5, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, ()-> {
+                        Integer.parseInt(input5.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 6:
+                    Main.CommandInput_M(input6, 5, new int[5][5]);
+                    Assertions.assertEquals(3,Main.robot.getyPosition());
+                    outputStreamCaptor_message.reset();
+
+                case 7:
+                    Main.CommandInput_M(input7, 5, new int[5][5]);
+                    Assertions.assertEquals(3,Main.robot.getyPosition());
+                    outputStreamCaptor_message.reset();
+
+                case 8:
+                    Main.CommandInput_M(input8, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
+                case 9:
+                    Main.CommandInput_M(input9, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
             }
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(3, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-            Assertions.assertTrue(function_called);
         }
 
-        if((M_Input4.equalsIgnoreCase("M03")) && ((Character.isDigit(input4.charAt(1))) && (input4.charAt(1) == '0')) && (Character.isDigit(input4.charAt(2))) && (input4.charAt(2) > '0')){
-            main.moveForward(Integer.parseInt(input4.substring(1)), gridSize, grid);
-            function_called = true;
-            if(function_called){
-                robot.setyPosition(0);
-                robot.setyPosition(robot.getyPosition() + Integer.parseInt(input4.substring(1)));
-            }
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(3, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-            Assertions.assertTrue(function_called);
-        }
     }
 
     @Test
-    public void CommandInput_I(){
-        Robot robot = new  Robot();
-        Main main = new Main();
+    public void CommandInput_I() {
 
+        Main.robot.setxPosition(3);
+        Main.robot.setyPosition(3);
+        Main.robot.setDirection(2);
+        Main.robot.setPenUp(false);
+
+        //Invalid Inputs
         String input1 = "I";
         String input2 = "I0";
-        String input3 = "I 3";
-        String input4 = "I03";
-        int gridSize = 6;
-        int[][] grid = new int[gridSize][gridSize];
-        boolean function_called = false;
+        String input3 = "i0s";
+        String input4 = "i1s";
+        String input5 = "i01s";
+        String input8 = "Is";
+        String input9 = "i00";
 
-        robot.setxPosition(2);
-        robot.setyPosition(1);
-        robot.setDirection(2);
-        robot.setPenUp(false);
+        //Valid Inputs
+        String input6 = "I3";
+        String input7 = "I03";
 
-        Scanner scanner1 = new Scanner(input1);
-        Scanner scanner2 = new Scanner(input2);
-        Scanner scanner3 = new Scanner(input3);
-        Scanner scanner4 = new Scanner(input4);
-
-        String I_Input1 = scanner1.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input2 = scanner2.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input3 = scanner3.nextLine().replaceAll("\\s+","").toUpperCase();
-        String I_Input4 = scanner4.nextLine().replaceAll("\\s+","").toUpperCase();
 
         outputStreamCaptor_message.reset();
-        if(I_Input1.equalsIgnoreCase("I")){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(6, gridSize);
-            Assertions.assertEquals(6, grid.length);
-            Assertions.assertEquals(6, grid[0].length);
-            Assertions.assertEquals(2, robot.getxPosition());
-            Assertions.assertEquals(1, robot.getyPosition());
-            Assertions.assertEquals(2, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
 
-        }
+        for (int i = 1; i < 8; i++) {
+            switch (i) {
+                case 1:
+                    Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
+                        Main.CommandInput_I(input1, new int[5][5]);
+                    });
+                    outputStreamCaptor_message.reset();
 
-        outputStreamCaptor_message.reset();
-        if((I_Input2.equalsIgnoreCase("I0")) && (Character.isDigit(input2.charAt(1))) && (input2.charAt(1) == '0')){
-            System.out.println("Invalid Input. Please enter an positive integer value");
-            Assertions.assertEquals("Invalid Input. Please enter an positive integer value", outputStreamCaptor_message.toString().trim());
-            Assertions.assertEquals(6, gridSize);
-            Assertions.assertEquals(6, grid.length);
-            Assertions.assertEquals(6, grid[0].length);
-            Assertions.assertEquals(2, robot.getxPosition());
-            Assertions.assertEquals(1, robot.getyPosition());
-            Assertions.assertEquals(2, robot.getDirection());
-            Assertions.assertFalse(robot.isPenUp());
-        }
+                case 2:
+                    Main.CommandInput_I(input2, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
 
-        if((I_Input3.equalsIgnoreCase("I3")) && (Character.isDigit(input3.charAt(1))) && (input3.charAt(1) > '0')){
-            gridSize = Integer.parseInt(input3.substring(1));
-            grid = main.initialize(gridSize);
-            function_called = true;
+                case 3:
+                    Main.CommandInput_I(input3, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, () -> {
+                        Integer.parseInt(input3.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
 
-            if(function_called){
-                robot.setxPosition(0);
-                robot.setyPosition(0);
-                robot.setDirection(0);
-                robot.setPenUp(true);
+                case 4:
+                    Main.CommandInput_I(input4, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, () -> {
+                        Integer.parseInt(input4.substring(1));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 5:
+                    Main.CommandInput_I(input5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(NumberFormatException.class, () -> {
+                        Integer.parseInt(input5.substring(2));
+                    });
+                    outputStreamCaptor_message.reset();
+
+                case 6:
+                    int[][] newGridSize = Main.CommandInput_I(input6, new int[5][5]);
+
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertEquals(0, Main.robot.getDirection());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(3, newGridSize.length);
+                    outputStreamCaptor_message.reset();
+
+                case 7:
+                    int[][] newGrid = Main.CommandInput_I(input7, new int[5][5]);
+
+                    Assertions.assertEquals(0, Main.robot.getxPosition());
+                    Assertions.assertEquals(0, Main.robot.getyPosition());
+                    Assertions.assertEquals(0, Main.robot.getDirection());
+                    Assertions.assertTrue(Main.robot.isPenUp());
+                    Assertions.assertEquals(3, newGrid.length);
+                    outputStreamCaptor_message.reset();
+
+                case 8:
+                    Main.CommandInput_I(input8, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
+                case 9:
+                    Main.CommandInput_I(input9, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
             }
-            Assertions.assertEquals(3, gridSize);
-            Assertions.assertEquals(3, grid.length);
-            Assertions.assertEquals(3, grid[0].length);
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertTrue(robot.isPenUp());
-            Assertions.assertTrue(function_called);
-
-        }
-
-        if((I_Input4.equalsIgnoreCase("I03")) && ((Character.isDigit(input4.charAt(1))) && (input4.charAt(1) == '0')) && (Character.isDigit(input4.charAt(2))) && (input4.charAt(2) > '0')){
-            gridSize = Integer.parseInt(input4.substring(1));
-            grid = main.initialize(gridSize);
-            function_called = true;
-
-            if(function_called){
-                robot.setxPosition(0);
-                robot.setyPosition(0);
-                robot.setDirection(0);
-                robot.setPenUp(true);
-            }
-            Assertions.assertEquals(3, gridSize);
-            Assertions.assertEquals(3, grid.length);
-            Assertions.assertEquals(3, grid[0].length);
-            Assertions.assertEquals(0, robot.getxPosition());
-            Assertions.assertEquals(0, robot.getyPosition());
-            Assertions.assertEquals(0, robot.getDirection());
-            Assertions.assertTrue(robot.isPenUp());
-            Assertions.assertTrue(function_called);
         }
     }
 }
