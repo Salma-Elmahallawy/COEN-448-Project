@@ -751,8 +751,6 @@ class MainTest {
         Main.robot.setyPosition(3);
         Main.robot.setDirection(2);
         Main.robot.setPenUp(false);
-        //Main.setGrid(new int[5][5]);
-
 
         //Invalid Inputs
         String input1 = "I";
