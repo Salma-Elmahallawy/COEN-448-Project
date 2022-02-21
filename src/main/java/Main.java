@@ -70,7 +70,7 @@ public class Main {
                 System.out.println("Invalid Input. Please enter an integer value greater than 0");
         }catch(InputMismatchException e){
             System.out.println("Invalid Input. Please enter an integer value greater than 0");
-            //sc.next();
+            sc.next();
         }
         return grid;
     }
