@@ -631,6 +631,24 @@ class MainTest {
     }
 
     @Test
+    public void CommandInput_H(){
+
+        outputStreamCaptor_message.reset();
+        String input = "H";
+
+        Main.commandHistory.add("r");
+        Main.commandHistory.add("c");
+        Main.commandHistory.add("p");
+        Main.commandHistory.add("M02");
+        Main.commandHistory.add("I 3");
+
+        Main.CommandInput(input, 5, new int[5][5]);
+
+        Assertions.assertEquals("The commands you have entered are: \r\nr, c, p, M02, I 3",outputStreamCaptor_message.toString().trim());
+
+    }
+
+    @Test
     public void CommandInput_Q(){
 
         outputStreamCaptor_message.reset();
@@ -686,17 +704,17 @@ class MainTest {
             switch (i){
                 case 1:
                     Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
-                        Main.CommandInput_M(input1, 5, new int [5][5]);
+                        Main.CommandInput_M(input1, input1,5, new int [5][5]);
                     });
                     outputStreamCaptor_message.reset();
 
                 case 2:
-                    Main.CommandInput_M(input2, 5, new int[5][5]);
+                    Main.CommandInput_M(input2, input2,5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 3:
-                    Main.CommandInput_M(input3, 5, new int[5][5]);
+                    Main.CommandInput_M(input3, input3,5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, ()-> {
                         Integer.parseInt(input3.substring(2));
@@ -704,7 +722,7 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 4:
-                    Main.CommandInput_M(input4, 5, new int[5][5]);
+                    Main.CommandInput_M(input4, input4,5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, ()-> {
                         Integer.parseInt(input4.substring(1));
@@ -712,7 +730,7 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 5:
-                    Main.CommandInput_M(input5, 5, new int[5][5]);
+                    Main.CommandInput_M(input5, input5, 5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, ()-> {
                         Integer.parseInt(input5.substring(2));
@@ -720,22 +738,22 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 6:
-                    Main.CommandInput_M(input6, 5, new int[5][5]);
+                    Main.CommandInput_M(input6, input6, 5, new int[5][5]);
                     Assertions.assertEquals(3,Main.robot.getyPosition());
                     outputStreamCaptor_message.reset();
 
                 case 7:
-                    Main.CommandInput_M(input7, 5, new int[5][5]);
+                    Main.CommandInput_M(input7, input7, 5, new int[5][5]);
                     Assertions.assertEquals(3,Main.robot.getyPosition());
                     outputStreamCaptor_message.reset();
 
                 case 8:
-                    Main.CommandInput_M(input8, 5, new int[5][5]);
+                    Main.CommandInput_M(input8, input8, 5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 9:
-                    Main.CommandInput_M(input9, 5, new int[5][5]);
+                    Main.CommandInput_M(input9, input9, 5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
@@ -772,17 +790,17 @@ class MainTest {
             switch (i) {
                 case 1:
                     Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
-                        Main.CommandInput_I(input1, new int[5][5]);
+                        Main.CommandInput_I(input1, input1, new int[5][5]);
                     });
                     outputStreamCaptor_message.reset();
 
                 case 2:
-                    Main.CommandInput_I(input2, new int[5][5]);
+                    Main.CommandInput_I(input2, input2, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 3:
-                    Main.CommandInput_I(input3, new int[5][5]);
+                    Main.CommandInput_I(input3, input3, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, () -> {
                         Integer.parseInt(input3.substring(2));
@@ -790,7 +808,7 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 4:
-                    Main.CommandInput_I(input4, new int[5][5]);
+                    Main.CommandInput_I(input4, input4, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, () -> {
                         Integer.parseInt(input4.substring(1));
@@ -798,7 +816,7 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 5:
-                    Main.CommandInput_I(input5, new int[5][5]);
+                    Main.CommandInput_I(input5, input5, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, () -> {
                         Integer.parseInt(input5.substring(2));
@@ -806,7 +824,7 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 6:
-                    int[][] newGridSize = Main.CommandInput_I(input6, new int[5][5]);
+                    int[][] newGridSize = Main.CommandInput_I(input6, input6, new int[5][5]);
 
                     Assertions.assertEquals(0, Main.robot.getxPosition());
                     Assertions.assertEquals(0, Main.robot.getyPosition());
@@ -816,7 +834,7 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 7:
-                    int[][] newGrid = Main.CommandInput_I(input7, new int[5][5]);
+                    int[][] newGrid = Main.CommandInput_I(input7, input7, new int[5][5]);
 
                     Assertions.assertEquals(0, Main.robot.getxPosition());
                     Assertions.assertEquals(0, Main.robot.getyPosition());
@@ -826,12 +844,12 @@ class MainTest {
                     outputStreamCaptor_message.reset();
 
                 case 8:
-                    Main.CommandInput_I(input8, new int[5][5]);
+                    Main.CommandInput_I(input8, input8, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 9:
-                    Main.CommandInput_I(input9, new int[5][5]);
+                    Main.CommandInput_I(input9, input9, new int[5][5]);
                     Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 

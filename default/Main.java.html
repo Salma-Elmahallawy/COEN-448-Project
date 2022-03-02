@@ -1,18 +1,18 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MainTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MainTest Coverage Results</a> &gt; <a href="index.source.html" class="el_package">default</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">import java.util.*;
 
-<span class="nc" id="L5">public class Main {</span>
+<span class="nc" id="L3">public class Main {</span>
 
-<span class="fc" id="L7">    public static final Robot robot = new Robot();</span>
-<span class="fc" id="L8">    private static final String[] robotDirection = {&quot;North&quot; , &quot;East&quot; , &quot;South&quot; , &quot;West&quot;};</span>
+<span class="fc" id="L5">    public static final Robot robot = new Robot();</span>
+<span class="fc" id="L6">    private static final String[] robotDirection = {&quot;North&quot; , &quot;East&quot; , &quot;South&quot; , &quot;West&quot;};</span>
     private static int gridSize;
     private static int[][] grid;
+    // Assumption: we only add the valid commands entered by the user
+<span class="fc" id="L10">    public static final List&lt;String&gt; commandHistory = new ArrayList&lt;&gt;();</span>
 
     public static void main(String[] args) {
 
-<span class="nc" id="L14">        String[] commands = {&quot;U&quot; , &quot;D&quot; , &quot;R&quot; , &quot;L&quot; , &quot;M s OR M0s&quot; , &quot;P&quot; , &quot;C&quot; , &quot;Q&quot; , &quot;I s or I0s&quot;};</span>
-<span class="nc" id="L15">        String[] compareCommands = {&quot;U&quot; , &quot;D&quot; , &quot;R&quot; , &quot;L&quot; , &quot;P&quot; , &quot;C&quot; , &quot;Q&quot; };</span>
+<span class="nc" id="L14">        String[] commands = {&quot;U&quot; , &quot;D&quot; , &quot;R&quot; , &quot;L&quot; , &quot;M s OR M0s&quot; , &quot;P&quot; , &quot;C&quot; , &quot;Q&quot; , &quot;I s or I0s&quot;, &quot;H&quot;};</span>
+<span class="nc" id="L15">        String[] compareCommands = {&quot;U&quot; , &quot;D&quot; , &quot;R&quot; , &quot;L&quot; , &quot;P&quot; , &quot;C&quot; , &quot;Q&quot; , &quot;H&quot;};</span>
 <span class="nc" id="L16">        Scanner sc = new Scanner(System.in);</span>
 
 <span class="nc" id="L18">        System.out.println(&quot;Enter the size of the square floor: &quot;);</span>
@@ -26,339 +26,290 @@ import java.util.Scanner;
         while(true){
 
             String input;
-<span class="nc" id="L29">            System.out.println(&quot;Enter a command&quot;);</span>
-<span class="nc" id="L30">            input = sc.nextLine().replaceAll(&quot;\\s+&quot;,&quot;&quot;).toUpperCase();</span>
+            String originalInput;
+<span class="nc" id="L30">            System.out.println(&quot;Enter a command&quot;);</span>
 
-            // Removes all spaces and changes all input letters to uppercase then checks with the list of commands available
-<span class="nc bnc" id="L33" title="All 2 branches missed.">            if(Arrays.asList(compareCommands).contains(input)){</span>
-<span class="nc" id="L34">                CommandInput(input, gridSize, grid);</span>
-<span class="nc bnc" id="L35" title="All 2 branches missed.">                if (input.equalsIgnoreCase(&quot;Q&quot;)) {</span>
-<span class="nc" id="L36">                    break;</span>
+<span class="nc" id="L32">            originalInput = sc.nextLine();</span>
+            // Removes all spaces and changes all input letters to uppercase
+<span class="nc" id="L34">            input = originalInput.replaceAll(&quot;\\s+&quot;,&quot;&quot;).toUpperCase();</span>
+
+
+            // Checks with the list of commands to see if the entered command is one of the allowed ones
+<span class="nc bnc" id="L38" title="All 2 branches missed.">            if(Arrays.asList(compareCommands).contains(input)){</span>
+<span class="nc" id="L39">                commandHistory.add(originalInput); // add the info entered by user to the list only if its valid</span>
+<span class="nc" id="L40">                CommandInput(input, gridSize, grid);</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">                if (input.equalsIgnoreCase(&quot;Q&quot;)) {</span>
+<span class="nc" id="L42">                    break;</span>
                 }
+<span class="nc bnc" id="L44" title="All 4 branches missed.">            }else if((input.length() &gt;= 2) &amp;&amp; (input.charAt(0) == 'M')){ // moves the robot in the grid s spaces</span>
+<span class="nc" id="L45">                CommandInput_M(input, originalInput, gridSize, grid);</span>
 
-<span class="nc bnc" id="L39" title="All 4 branches missed.">            }else if((input.length() &gt;= 2) &amp;&amp; (input.charAt(0) == 'M')){ // moves the robot in the grid s spaces</span>
-<span class="nc" id="L40">                CommandInput_M(input, gridSize, grid);</span>
-
-<span class="nc bnc" id="L42" title="All 4 branches missed.">            }else if((input.length() &gt;= 2) &amp;&amp; (input.charAt(0) == 'I')){ // moves the robot in the grid s spaces</span>
-<span class="nc" id="L43">                grid = CommandInput_I(input, grid);</span>
+<span class="nc bnc" id="L47" title="All 4 branches missed.">            }else if((input.length() &gt;= 2) &amp;&amp; (input.charAt(0) == 'I')){ // moves the robot in the grid s spaces</span>
+<span class="nc" id="L48">                grid = CommandInput_I(input, originalInput, grid);</span>
 
             }else{ // loop again if the user input is an invalid command
-<span class="nc" id="L46">                PrintCommands(commands);</span>
+<span class="nc" id="L51">                PrintCommands(commands);</span>
             }
-<span class="nc" id="L48">        }</span>
-<span class="nc" id="L49">    }</span>
+<span class="nc" id="L53">        }</span>
+<span class="nc" id="L54">    }</span>
 
     public static int getGridSize() {
-<span class="fc" id="L52">        return gridSize;</span>
+<span class="fc" id="L57">        return gridSize;</span>
     }
 
     public static int[][] getGrid() {
-<span class="fc" id="L56">        return grid;</span>
+<span class="fc" id="L61">        return grid;</span>
     }
 
     public static void setGrid(int[][] grid) {
-<span class="fc" id="L60">        Main.grid = grid;</span>
-<span class="fc" id="L61">    }</span>
+<span class="fc" id="L65">        Main.grid = grid;</span>
+<span class="fc" id="L66">    }</span>
 
     public static int[][] gridCreation(int[][] grid, Scanner sc){
         try{
-<span class="fc" id="L65">            gridSize = sc.nextInt();</span>
-<span class="fc bfc" id="L66" title="All 2 branches covered.">            if(gridSize &gt; 0){</span>
-<span class="fc" id="L67">                return initialize(gridSize);</span>
+<span class="fc" id="L70">            gridSize = sc.nextInt();</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">            if(gridSize &gt; 0){</span>
+<span class="fc" id="L72">                return initialize(gridSize);</span>
             }else
                 //throw new InputMismatchException();
-<span class="fc" id="L70">                System.out.println(&quot;Invalid Input. Please enter an integer value greater than 0&quot;);</span>
-<span class="fc" id="L71">        }catch(InputMismatchException e){</span>
-<span class="fc" id="L72">            System.out.println(&quot;Invalid Input. Please enter an integer value greater than 0&quot;);</span>
-            //sc.next();
-<span class="fc" id="L74">        }</span>
-<span class="fc" id="L75">        return grid;</span>
+<span class="fc" id="L75">                System.out.println(&quot;Invalid Input. Please enter an integer value greater than 0&quot;);</span>
+<span class="fc" id="L76">        }catch(InputMismatchException e){</span>
+<span class="fc" id="L77">            System.out.println(&quot;Invalid Input. Please enter an integer value greater than 0&quot;);</span>
+<span class="fc" id="L78">            sc.next();</span>
+<span class="fc" id="L79">        }</span>
+<span class="fc" id="L80">        return grid;</span>
     }
 
     // creates and initializes the grid to zeros, robot to position (0,0) , facing north , and pen up ( called at command I n )
     public static int[][] initialize(int gridSize){
-<span class="fc" id="L80">        robot.setxPosition(0);</span>
-<span class="fc" id="L81">        robot.setyPosition(0);</span>
-<span class="fc" id="L82">        robot.setDirection(0);</span>
-<span class="fc" id="L83">        robot.setPenUp(true);</span>
+<span class="fc" id="L85">        robot.setxPosition(0);</span>
+<span class="fc" id="L86">        robot.setyPosition(0);</span>
+<span class="fc" id="L87">        robot.setDirection(0);</span>
+<span class="fc" id="L88">        robot.setPenUp(true);</span>
 
-<span class="fc" id="L85">        return new int[gridSize][gridSize];</span>
+<span class="fc" id="L90">        return new int[gridSize][gridSize];</span>
     }
 
     // Printing the information about the robot direction, position, and pen position ( called at command C )
     public static void printRobotInfo(){
-<span class="fc" id="L90">        System.out.println(&quot;Current Position: (&quot; + robot.getxPosition() + &quot;,&quot; + robot.getyPosition() + &quot;)&quot;);</span>
-<span class="fc bfc" id="L91" title="All 2 branches covered.">        if(robot.isPenUp())</span>
-<span class="fc" id="L92">            System.out.println(&quot;Pen Position: Up&quot;);</span>
+<span class="fc" id="L95">        System.out.println(&quot;Current Position: (&quot; + robot.getxPosition() + &quot;,&quot; + robot.getyPosition() + &quot;)&quot;);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        if(robot.isPenUp())</span>
+<span class="fc" id="L97">            System.out.println(&quot;Pen Position: Up&quot;);</span>
         else
-<span class="fc" id="L94">            System.out.println(&quot;Pen Position: Down&quot;);</span>
+<span class="fc" id="L99">            System.out.println(&quot;Pen Position: Down&quot;);</span>
 
-<span class="fc" id="L96">        System.out.println(&quot;Pen Direction: &quot; + robotDirection[((robot.getDirection()%4) + 4) % 4]);</span>
-<span class="fc" id="L97">    }</span>
+<span class="fc" id="L101">        System.out.println(&quot;Pen Direction: &quot; + robotDirection[((robot.getDirection()%4) + 4) % 4]);</span>
+<span class="fc" id="L102">    }</span>
 
     // Prints the square floor ( called at command P )
     public static void printGrid(int[][] grid, int gridSize){
 
-<span class="fc" id="L102">        int ytemp = gridSize - 1 , xtemp = 0;</span>
+<span class="fc" id="L107">        int ytemp = gridSize - 1 , xtemp = 0;</span>
 
-<span class="fc" id="L104">        System.out.print(&quot;---+&quot;);</span>
-<span class="fc bfc" id="L105" title="All 2 branches covered.">        for(int j = 0 ; j &lt; gridSize ; j++){</span>
-<span class="fc" id="L106">            System.out.print(&quot;---+&quot;);</span>
+<span class="fc" id="L109">        System.out.print(&quot;---+&quot;);</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">        for(int j = 0 ; j &lt; gridSize ; j++){</span>
+<span class="fc" id="L111">            System.out.print(&quot;---+&quot;);</span>
         }
-<span class="fc" id="L108">        System.out.println();</span>
+<span class="fc" id="L113">        System.out.println();</span>
 
-<span class="fc bfc" id="L110" title="All 2 branches covered.">        for(int i = gridSize - 1 ; i &gt;= 0 ; i--){</span>
-<span class="fc bfc" id="L111" title="All 2 branches covered.">            if(ytemp &gt; 9){</span>
-<span class="fc" id="L112">                System.out.print(ytemp-- + &quot; &quot;);</span>
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        for(int i = gridSize - 1 ; i &gt;= 0 ; i--){</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            if(ytemp &gt; 9){</span>
+<span class="fc" id="L117">                System.out.print(ytemp-- + &quot; &quot;);</span>
             }else{
-<span class="fc" id="L114">                System.out.print(ytemp-- + &quot;  &quot;);</span>
+<span class="fc" id="L119">                System.out.print(ytemp-- + &quot;  &quot;);</span>
             }
 
-<span class="fc bfc" id="L117" title="All 2 branches covered.">            for(int j = 0 ; j &lt; gridSize ; j++){</span>
-<span class="fc bfc" id="L118" title="All 2 branches covered.">                if(grid[j][i] == 1)</span>
-<span class="fc" id="L119">                    System.out.printf(&quot;%-2s%-2s&quot;, &quot;|&quot;, &quot;*&quot;);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            for(int j = 0 ; j &lt; gridSize ; j++){</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                if(grid[j][i] == 1)</span>
+<span class="fc" id="L124">                    System.out.printf(&quot;%-2s%-2s&quot;, &quot;|&quot;, &quot;*&quot;);</span>
                 else
-<span class="fc" id="L121">                    System.out.printf(&quot;%-2s%-2s&quot;, &quot;|&quot;, &quot; &quot;);</span>
+<span class="fc" id="L126">                    System.out.printf(&quot;%-2s%-2s&quot;, &quot;|&quot;, &quot; &quot;);</span>
 
             }
-<span class="fc" id="L124">            System.out.print(&quot;|\n---+&quot;);</span>
-<span class="fc bfc" id="L125" title="All 2 branches covered.">            for(int j = 0 ; j &lt; gridSize ; j++){</span>
-<span class="fc" id="L126">                System.out.print(&quot;---+&quot;);</span>
+<span class="fc" id="L129">            System.out.print(&quot;|\n---+&quot;);</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">            for(int j = 0 ; j &lt; gridSize ; j++){</span>
+<span class="fc" id="L131">                System.out.print(&quot;---+&quot;);</span>
             }
-<span class="fc" id="L128">            System.out.println();</span>
+<span class="fc" id="L133">            System.out.println();</span>
         }
-<span class="fc" id="L130">        System.out.print(&quot;     &quot;);</span>
-<span class="fc bfc" id="L131" title="All 2 branches covered.">        for(int i = 0 ; i &lt; gridSize ; i++){</span>
-<span class="fc bfc" id="L132" title="All 2 branches covered.">            if(i &gt; 9){</span>
-<span class="fc" id="L133">                System.out.print(xtemp++ + &quot;  &quot;);</span>
+<span class="fc" id="L135">        System.out.print(&quot;     &quot;);</span>
+<span class="fc bfc" id="L136" title="All 2 branches covered.">        for(int i = 0 ; i &lt; gridSize ; i++){</span>
+<span class="fc bfc" id="L137" title="All 2 branches covered.">            if(i &gt; 9){</span>
+<span class="fc" id="L138">                System.out.print(xtemp++ + &quot;  &quot;);</span>
             }else{
-<span class="fc" id="L135">                System.out.print(xtemp++ + &quot;   &quot;);</span>
+<span class="fc" id="L140">                System.out.print(xtemp++ + &quot;   &quot;);</span>
             }
         }
-<span class="fc" id="L138">        System.out.println();</span>
-<span class="fc" id="L139">    }</span>
+<span class="fc" id="L143">        System.out.println();</span>
+<span class="fc" id="L144">    }</span>
 
     public static void moveForward(int numOfSpaces , int gridSize , int[][] grid){
 
-<span class="fc bfc" id="L143" title="All 2 branches covered.">        if((((robot.getDirection()%4) + 4) % 4) == 0){ // facing north -&gt; so we add to the yPosition</span>
-<span class="fc bfc" id="L144" title="All 2 branches covered.">            if((robot.getyPosition() + numOfSpaces) &lt; gridSize) {</span>
-<span class="fc bfc" id="L145" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
-<span class="fc bfc" id="L146" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
-<span class="fc" id="L147">                        grid[robot.getxPosition()][robot.getyPosition() + i] = 1;</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        if((((robot.getDirection()%4) + 4) % 4) == 0){ // facing north -&gt; so we add to the yPosition</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">            if((robot.getyPosition() + numOfSpaces) &lt; gridSize) {</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
+<span class="fc bfc" id="L151" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
+<span class="fc" id="L152">                        grid[robot.getxPosition()][robot.getyPosition() + i] = 1;</span>
                     }
-<span class="fc" id="L149">                    robot.setyPosition(robot.getyPosition() + numOfSpaces);</span>
+<span class="fc" id="L154">                    robot.setyPosition(robot.getyPosition() + numOfSpaces);</span>
                 }else{ // robot moves normally without tracing
-<span class="fc" id="L151">                    robot.setyPosition(robot.getyPosition() + numOfSpaces);</span>
+<span class="fc" id="L156">                    robot.setyPosition(robot.getyPosition() + numOfSpaces);</span>
                 }
             }else {
-<span class="fc" id="L154">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
+<span class="fc" id="L159">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
             }
-<span class="fc bfc" id="L156" title="All 2 branches covered.">        }else if((((robot.getDirection()%4) + 4) % 4) == 1) { // facing east -&gt; so we add to the xPosition</span>
-<span class="fc bfc" id="L157" title="All 2 branches covered.">            if((robot.getxPosition() + numOfSpaces) &lt; gridSize) {</span>
-<span class="fc bfc" id="L158" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
-<span class="fc bfc" id="L159" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
-<span class="fc" id="L160">                        grid[robot.getxPosition() + i][robot.getyPosition()] = 1;</span>
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        }else if((((robot.getDirection()%4) + 4) % 4) == 1) { // facing east -&gt; so we add to the xPosition</span>
+<span class="fc bfc" id="L162" title="All 2 branches covered.">            if((robot.getxPosition() + numOfSpaces) &lt; gridSize) {</span>
+<span class="fc bfc" id="L163" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
+<span class="fc" id="L165">                        grid[robot.getxPosition() + i][robot.getyPosition()] = 1;</span>
                     }
-<span class="fc" id="L162">                    robot.setxPosition(robot.getxPosition() + numOfSpaces);</span>
+<span class="fc" id="L167">                    robot.setxPosition(robot.getxPosition() + numOfSpaces);</span>
                 }else{ // robot moves normally without tracing
-<span class="fc" id="L164">                    robot.setxPosition(robot.getxPosition() + numOfSpaces);</span>
+<span class="fc" id="L169">                    robot.setxPosition(robot.getxPosition() + numOfSpaces);</span>
                 }
             }else{
-<span class="fc" id="L167">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
+<span class="fc" id="L172">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
             }
-<span class="fc bfc" id="L169" title="All 2 branches covered.">        }else if((((robot.getDirection()%4) + 4) % 4) == 2) { // facing south -&gt; so we subtract from the yPosition</span>
-<span class="fc bfc" id="L170" title="All 2 branches covered.">            if((robot.getyPosition() - numOfSpaces) &gt;= 0) {</span>
-<span class="fc bfc" id="L171" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
-<span class="fc bfc" id="L172" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
-<span class="fc" id="L173">                        grid[robot.getxPosition()][robot.getyPosition() - i] = 1;</span>
+<span class="fc bfc" id="L174" title="All 2 branches covered.">        }else if((((robot.getDirection()%4) + 4) % 4) == 2) { // facing south -&gt; so we subtract from the yPosition</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">            if((robot.getyPosition() - numOfSpaces) &gt;= 0) {</span>
+<span class="fc bfc" id="L176" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
+<span class="fc" id="L178">                        grid[robot.getxPosition()][robot.getyPosition() - i] = 1;</span>
                     }
-<span class="fc" id="L175">                    robot.setyPosition(robot.getyPosition() - numOfSpaces);</span>
+<span class="fc" id="L180">                    robot.setyPosition(robot.getyPosition() - numOfSpaces);</span>
                 }else{ // robot moves normally without tracing
-<span class="fc" id="L177">                    robot.setyPosition(robot.getyPosition() - numOfSpaces);</span>
+<span class="fc" id="L182">                    robot.setyPosition(robot.getyPosition() - numOfSpaces);</span>
                 }
             }else {
-<span class="fc" id="L180">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
+<span class="fc" id="L185">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
             }
         }else{ // facing west -&gt; so we subtract from the xPosition
-<span class="fc bfc" id="L183" title="All 2 branches covered.">            if((robot.getxPosition() - numOfSpaces) &gt;= 0) {</span>
-<span class="fc bfc" id="L184" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
-<span class="fc bfc" id="L185" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
-<span class="fc" id="L186">                        grid[robot.getxPosition() - i][robot.getyPosition()] = 1;</span>
+<span class="fc bfc" id="L188" title="All 2 branches covered.">            if((robot.getxPosition() - numOfSpaces) &gt;= 0) {</span>
+<span class="fc bfc" id="L189" title="All 2 branches covered.">                if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid</span>
+<span class="fc bfc" id="L190" title="All 2 branches covered.">                    for(int i = 0; i &lt;= numOfSpaces; i++) {</span>
+<span class="fc" id="L191">                        grid[robot.getxPosition() - i][robot.getyPosition()] = 1;</span>
                     }
-<span class="fc" id="L188">                    robot.setxPosition(robot.getxPosition() - numOfSpaces);</span>
+<span class="fc" id="L193">                    robot.setxPosition(robot.getxPosition() - numOfSpaces);</span>
                 }else{ // robot moves normally without tracing
-<span class="fc" id="L190">                    robot.setxPosition(robot.getxPosition() - numOfSpaces);</span>
+<span class="fc" id="L195">                    robot.setxPosition(robot.getxPosition() - numOfSpaces);</span>
                 }
             }else{
-<span class="fc" id="L193">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
+<span class="fc" id="L198">                System.out.println(&quot;Invalid move (out of bound)&quot;);</span>
             }
         }
-
-
-//        switch(((robot.getDirection()%4) + 4) % 4){
-//            case 0: // facing north -&gt; so we add to the yPosition
-//
-//                if((robot.getyPosition() + numOfSpaces) &lt; gridSize) {
-//                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-//                        for(int i = 0; i &lt;= numOfSpaces; i++) {
-//                            grid[robot.getxPosition()][robot.getyPosition() + i] = 1;
-//                        }
-//                        robot.setyPosition(robot.getyPosition() + numOfSpaces);
-//                    }else{ // robot moves normally without tracing
-//                        robot.setyPosition(robot.getyPosition() + numOfSpaces);
-//                    }
-//                }else {
-//                    System.out.println(&quot;Invalid move (out of bound)&quot;);
-//                }
-//                break;
-//
-//            case 1: // facing east -&gt; so we add to the xPosition
-//
-//                if((robot.getxPosition() + numOfSpaces) &lt; gridSize) {
-//                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-//                        for(int i = 0; i &lt;= numOfSpaces; i++) {
-//                            grid[robot.getxPosition() + i][robot.getyPosition()] = 1;
-//                        }
-//                        robot.setxPosition(robot.getxPosition() + numOfSpaces);
-//                    }else{ // robot moves normally without tracing
-//                        robot.setxPosition(robot.getxPosition() + numOfSpaces);
-//                    }
-//                }else{
-//                    System.out.println(&quot;Invalid move (out of bound)&quot;);
-//                }
-//                break;
-//
-//
-//            case 2:// facing south -&gt; so we subtract from the yPosition
-//
-//                if((robot.getyPosition() - numOfSpaces) &gt;= 0) {
-//                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-//                        for(int i = 0; i &lt;= numOfSpaces; i++) {
-//                            grid[robot.getxPosition()][robot.getyPosition() - i] = 1;
-//                        }
-//                        robot.setyPosition(robot.getyPosition() - numOfSpaces);
-//                    }else{ // robot moves normally without tracing
-//                        robot.setyPosition(robot.getyPosition() - numOfSpaces);
-//                    }
-//                }else {
-//                    System.out.println(&quot;Invalid move (out of bound)&quot;);
-//                }
-//                break;
-//
-//
-//            case 3:// facing west -&gt; so we subtract from the xPosition
-//
-//                if((robot.getxPosition() - numOfSpaces) &gt;= 0) {
-//                    if(!robot.isPenUp()){ // robot traces its movement by changing 0 to 1 on the grid
-//                        for(int i = 0; i &lt;= numOfSpaces; i++) {
-//                            grid[robot.getxPosition() - i][robot.getyPosition()] = 1;
-//                        }
-//                        robot.setxPosition(robot.getxPosition() - numOfSpaces);
-//                    }else{ // robot moves normally without tracing
-//                        robot.setxPosition(robot.getxPosition() - numOfSpaces);
-//                    }
-//                }else{
-//                    System.out.println(&quot;Invalid move (out of bound)&quot;);
-//                }
-//                break;
-//        }
-<span class="fc" id="L265">    }</span>
+<span class="fc" id="L201">    }</span>
 
     public static void PrintCommands(String[] commands){
-<span class="fc" id="L268">        System.out.println(&quot;Invalid Command. Please use one of the following commands:&quot;);</span>
-<span class="fc bfc" id="L269" title="All 2 branches covered.">        for (String command : commands) {</span>
-<span class="fc" id="L270">            System.out.println(command);</span>
+<span class="fc" id="L204">        System.out.println(&quot;Invalid Command. Please use one of the following commands:&quot;);</span>
+<span class="fc bfc" id="L205" title="All 2 branches covered.">        for (String command : commands) {</span>
+<span class="fc" id="L206">            System.out.println(command);</span>
         }
-<span class="fc" id="L272">    }</span>
+<span class="fc" id="L208">    }</span>
 
-    public static void CommandInput_M(String input, int gridSize, int[][] grid) {
+    public static void printCommandHistory(){
+<span class="fc" id="L211">        System.out.println(&quot;The commands you have entered are: &quot;);</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">        for (int i = 0; i &lt; commandHistory.size()-1 ;  i++) {</span>
+<span class="fc" id="L213">            System.out.print( commandHistory.get(i) + &quot;, &quot;);</span>
+        }
+<span class="fc" id="L215">        System.out.println(commandHistory.get(commandHistory.size()-1));</span>
+<span class="fc" id="L216">    }</span>
+
+    public static void CommandInput_M(String input, String originalInput, int gridSize, int[][] grid) {
         // when the input is M0s
-<span class="fc bfc" id="L276" title="All 4 branches covered.">        if((Character.isDigit(input.charAt(1))) &amp;&amp; (input.charAt(1) == '0')){</span>
+<span class="fc bfc" id="L220" title="All 4 branches covered.">        if((Character.isDigit(input.charAt(1))) &amp;&amp; (input.charAt(1) == '0')){</span>
             try{
-<span class="fc bfc" id="L278" title="All 4 branches covered.">                if((Character.isDigit(input.charAt(2)) &amp;&amp; (input.charAt(2) &gt; '0'))){</span>
-
-<span class="fc" id="L280">                    moveForward(Integer.parseInt(input.substring(2)) , gridSize , grid);</span>
+<span class="fc bfc" id="L222" title="All 4 branches covered.">                if((Character.isDigit(input.charAt(2)) &amp;&amp; (input.charAt(2) &gt; '0'))){</span>
+<span class="fc" id="L223">                    moveForward(Integer.parseInt(input.substring(2)) , gridSize , grid);</span>
+<span class="fc" id="L224">                    commandHistory.add(originalInput); // add the info entered by user to the list only if its valid</span>
                 }else
-<span class="fc" id="L282">                    System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
-<span class="fc" id="L283">            }catch(NumberFormatException | StringIndexOutOfBoundsException e){</span>
-<span class="fc" id="L284">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
-<span class="fc" id="L285">            }</span>
+<span class="fc" id="L226">                    System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L227">            }catch(NumberFormatException | StringIndexOutOfBoundsException e){</span>
+<span class="fc" id="L228">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L229">            }</span>
 
-<span class="fc bfc" id="L287" title="All 2 branches covered.">        }else if(Character.isDigit(input.charAt(1))){ // when the input is M s</span>
+<span class="fc bfc" id="L231" title="All 2 branches covered.">        }else if(Character.isDigit(input.charAt(1))){ // when the input is M s</span>
 
            try{
-<span class="fc" id="L290">                moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);</span>
+<span class="fc" id="L234">               moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);</span>
+<span class="fc" id="L235">               commandHistory.add(originalInput); // add the info entered by user to the list only if its valid</span>
 
-<span class="fc" id="L292">            }catch (NumberFormatException e){</span>
-<span class="fc" id="L293">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
-<span class="fc" id="L294">            }</span>
+<span class="fc" id="L237">            }catch (NumberFormatException e){</span>
+<span class="fc" id="L238">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L239">            }</span>
         }else{
-<span class="fc" id="L296">            System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L241">            System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
         }
-<span class="fc" id="L298">    }</span>
+<span class="fc" id="L243">    }</span>
 
-    public static int[][] CommandInput_I(String input, int[][] grid){
+    public static int[][] CommandInput_I(String input,String originalInput, int[][] grid){
         // when the input is I0s
-<span class="fc bfc" id="L302" title="All 4 branches covered.">        if((Character.isDigit(input.charAt(1))) &amp;&amp; (input.charAt(1) == '0')){</span>
+<span class="fc bfc" id="L247" title="All 4 branches covered.">        if((Character.isDigit(input.charAt(1))) &amp;&amp; (input.charAt(1) == '0')){</span>
             try{
-<span class="fc bfc" id="L304" title="All 4 branches covered.">                if((Character.isDigit(input.charAt(2)) &amp;&amp; (input.charAt(2) &gt; '0'))){</span>
-<span class="fc" id="L305">                    gridSize = Integer.parseInt(input.substring(2));</span>
-<span class="fc" id="L306">                    return initialize(gridSize);</span>
+<span class="fc bfc" id="L249" title="All 4 branches covered.">                if((Character.isDigit(input.charAt(2)) &amp;&amp; (input.charAt(2) &gt; '0'))){</span>
+<span class="fc" id="L250">                    gridSize = Integer.parseInt(input.substring(2));</span>
+<span class="fc" id="L251">                    commandHistory.add(originalInput); // add the info entered by user to the list only if its valid</span>
+<span class="fc" id="L252">                    return initialize(gridSize);</span>
                 }else
-<span class="fc" id="L308">                    System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
-<span class="fc" id="L309">            }catch(NumberFormatException | StringIndexOutOfBoundsException e){</span>
-<span class="fc" id="L310">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
-<span class="fc" id="L311">            }</span>
+<span class="fc" id="L254">                    System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L255">            }catch(NumberFormatException | StringIndexOutOfBoundsException e){</span>
+<span class="fc" id="L256">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L257">            }</span>
 
-<span class="fc bfc" id="L313" title="All 2 branches covered.">        }else if(Character.isDigit(input.charAt(1))){ // when the input is I s</span>
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        }else if(Character.isDigit(input.charAt(1))){ // when the input is I s</span>
 
             try{
-<span class="fc" id="L316">                gridSize = Integer.parseInt(input.substring(1));</span>
-<span class="fc" id="L317">                grid = initialize(gridSize);</span>
+<span class="fc" id="L262">                gridSize = Integer.parseInt(input.substring(1));</span>
+<span class="fc" id="L263">                commandHistory.add(originalInput); // add the info entered by user to the list only if its valid</span>
+<span class="fc" id="L264">                grid = initialize(gridSize);</span>
 
-<span class="fc" id="L319">            }catch (NumberFormatException e){</span>
-<span class="fc" id="L320">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
-<span class="fc" id="L321">            }</span>
+<span class="fc" id="L266">            }catch (NumberFormatException e){</span>
+<span class="fc" id="L267">                System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L268">            }</span>
         }else{
-<span class="fc" id="L323">            System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
+<span class="fc" id="L270">            System.out.println(&quot;Invalid Input. Please enter an positive integer value&quot;);</span>
         }
-<span class="fc" id="L325">    return grid;</span>
+<span class="fc" id="L272">    return grid;</span>
     }
 
     public static void CommandInput(String input, int gridSize , int[][] grid){
-<span class="fc bfc" id="L329" title="All 2 branches covered.">        if(input.equalsIgnoreCase(&quot;U&quot;)){ // puts the position of the pen up</span>
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        if(input.equalsIgnoreCase(&quot;U&quot;)){ // puts the position of the pen up</span>
 
-<span class="fc" id="L331">            robot.setPenUp(true);</span>
+<span class="fc" id="L278">            robot.setPenUp(true);</span>
 
-<span class="fc bfc" id="L333" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;D&quot;)) { // puts the position of the pen down</span>
+<span class="fc bfc" id="L280" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;D&quot;)) { // puts the position of the pen down</span>
 
-<span class="fc" id="L335">            robot.setPenUp(false);</span>
+<span class="fc" id="L282">            robot.setPenUp(false);</span>
 
-<span class="fc bfc" id="L337" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;R&quot;)){ // turn the robot direction to the right</span>
+<span class="fc bfc" id="L284" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;R&quot;)){ // turn the robot direction to the right</span>
 
-<span class="fc" id="L339">            robot.setDirection(robot.getDirection() + 1);</span>
+<span class="fc" id="L286">            robot.setDirection(robot.getDirection() + 1);</span>
 
-<span class="fc bfc" id="L341" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;L&quot;)){ // turn the robot direction to the left</span>
+<span class="fc bfc" id="L288" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;L&quot;)){ // turn the robot direction to the left</span>
 
-<span class="fc" id="L343">            robot.setDirection(robot.getDirection() - 1);</span>
+<span class="fc" id="L290">            robot.setDirection(robot.getDirection() - 1);</span>
 
-<span class="fc bfc" id="L345" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;P&quot;)){ // prints out the grid into console</span>
+<span class="fc bfc" id="L292" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;P&quot;)){ // prints out the grid into console</span>
 
-<span class="fc" id="L347">            printGrid(grid , gridSize);</span>
+<span class="fc" id="L294">            printGrid(grid , gridSize);</span>
 
-<span class="fc bfc" id="L349" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;C&quot;)){ // prints out the Robot information</span>
+<span class="fc bfc" id="L296" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;C&quot;)){ // prints out the Robot information</span>
 
-<span class="fc" id="L351">            printRobotInfo();</span>
+<span class="fc" id="L298">            printRobotInfo();</span>
 
-<span class="fc bfc" id="L353" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;Q&quot;)){ // Quits the program</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;H&quot;)){</span>
 
-<span class="fc" id="L355">            System.out.println(&quot;Exiting Program&quot;);</span>
+<span class="fc" id="L302">            printCommandHistory();</span>
+
+<span class="fc bfc" id="L304" title="All 2 branches covered.">        }else if(input.equalsIgnoreCase(&quot;Q&quot;)){ // Quits the program</span>
+
+<span class="fc" id="L306">            System.out.println(&quot;Exiting Program&quot;);</span>
 
         }else{
 
-<span class="fc" id="L359">            System.out.println(&quot;Wrong Command Input&quot;);</span>
+<span class="fc" id="L310">            System.out.println(&quot;Wrong Command Input&quot;);</span>
 
         }
-<span class="fc" id="L362">    }</span>
+<span class="fc" id="L313">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>
