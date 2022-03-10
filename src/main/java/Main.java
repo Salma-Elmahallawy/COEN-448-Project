@@ -39,7 +39,7 @@ public class Main {
             }else if((input.length() >= 2) && (input.charAt(0) == 'M')){ // moves the robot in the grid s spaces
                 CommandInput_M(input, gridSize, grid);
 
-            }else if((input.length() >= 2) && (input.charAt(0) == 'I')){ // moves the robot in the grid s spaces
+            }else if((input.length() >= 2) && (input.charAt(0) == 'I')){ // ReInitializes the grid to the specified input size
                 grid = CommandInput_I(input, grid);
 
             }else{ // loop again if the user input is an invalid command
@@ -63,13 +63,14 @@ public class Main {
     public static int[][] gridCreation(int[][] grid, Scanner sc){
         try{
             gridSize = sc.nextInt();
-            if(gridSize > 0){
+            if((gridSize > 0) &&(gridSize < 100)){
                 return initialize(gridSize);
             }else
                 //throw new InputMismatchException();
-                System.out.println("Invalid Input. Please enter an integer value greater than 0");
+            gridSize = 0;
+                System.out.println("Invalid Input. Please enter an integer value greater than 0 and less than a 100");
         }catch(InputMismatchException e){
-            System.out.println("Invalid Input. Please enter an integer value greater than 0");
+            System.out.println("Invalid Input. Please enter an integer value greater than 0 and less than a 100");
             sc.next();
         }
         return grid;
@@ -203,55 +204,51 @@ public class Main {
     }
 
     public static void CommandInput_M(String input, int gridSize, int[][] grid) {
-        // when the input is M0s
-        if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
-            try{
-                if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
+        try{
+            // when the input is M0s
+            if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
 
+                if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
                     moveForward(Integer.parseInt(input.substring(2)) , gridSize , grid);
                 }else
                     System.out.println("Invalid Input. Please enter an positive integer value");
-            }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-                System.out.println("Invalid Input. Please enter an positive integer value");
-            }
 
-        }else if(Character.isDigit(input.charAt(1))){ // when the input is M s
+            }else if(Character.isDigit(input.charAt(1))){ // when the input is M s
 
-           try{
                 moveForward(Integer.parseInt(input.substring(1)) , gridSize , grid);
 
-            }catch (NumberFormatException e){
+            }else{
                 System.out.println("Invalid Input. Please enter an positive integer value");
             }
-        }else{
+
+        }catch(NumberFormatException | IndexOutOfBoundsException e){
             System.out.println("Invalid Input. Please enter an positive integer value");
         }
     }
 
     public static int[][] CommandInput_I(String input, int[][] grid){
-        // when the input is I0s
-        if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
-            try{
-                if((Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0'))){
+
+        try{
+            // when the input is I0s
+            if((Character.isDigit(input.charAt(1))) && (input.charAt(1) == '0')){
+
+                if(Character.isDigit(input.charAt(2)) && (input.charAt(2) > '0') && (Integer.parseInt(input.substring(2)) < 100)){
                     gridSize = Integer.parseInt(input.substring(2));
                     return initialize(gridSize);
                 }else
-                    System.out.println("Invalid Input. Please enter an positive integer value");
-            }catch(NumberFormatException | StringIndexOutOfBoundsException e){
-                System.out.println("Invalid Input. Please enter an positive integer value");
-            }
+                    System.out.println("Invalid Input. Please enter an positive integer value that is less than a 100");
 
-        }else if(Character.isDigit(input.charAt(1))){ // when the input is I s
+            }else if(Character.isDigit(input.charAt(1)) && (Integer.parseInt(input.substring(1)) < 100)){ // when the input is I s
 
-            try{
                 gridSize = Integer.parseInt(input.substring(1));
                 grid = initialize(gridSize);
 
-            }catch (NumberFormatException e){
-                System.out.println("Invalid Input. Please enter an positive integer value");
+            }else{
+                System.out.println("Invalid Input. Please enter an positive integer value that is less than a 100");
             }
-        }else{
-            System.out.println("Invalid Input. Please enter an positive integer value");
+
+        }catch(NumberFormatException | IndexOutOfBoundsException e){
+            System.out.println("Invalid Input. Please enter an positive integer value that is less than a 100");
         }
     return grid;
     }

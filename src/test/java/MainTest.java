@@ -35,7 +35,7 @@ class MainTest {
     @Test
     public void gridCreation(){
 
-        for (int i = 0; i < 3; i++){
+        for (int i = 0; i < 4; i++){
             outputStreamCaptor_message.reset();
             switch (i){
                 case 0:
@@ -48,13 +48,19 @@ class MainTest {
                 case 1:
                     Scanner sc2 = new Scanner("wrong input");
                     Main.gridCreation(Main.getGrid(), sc2);
-                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 2:
                     Scanner sc3 = new Scanner("0");
                     Main.gridCreation(Main.getGrid(), sc3);
-                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
+                case 3:
+                    Scanner sc4 = new Scanner("100");
+                    Main.gridCreation(Main.getGrid(), sc4);
+                    Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
             }
@@ -685,8 +691,10 @@ class MainTest {
         for(int i = 1; i < 8; i++){
             switch (i){
                 case 1:
-                    Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
-                        Main.CommandInput_M(input1, 5, new int [5][5]);
+                    Main.CommandInput_M(input1, 5, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(IndexOutOfBoundsException.class, ()-> {
+                        input1.charAt(1);
                     });
                     outputStreamCaptor_message.reset();
 
@@ -760,6 +768,8 @@ class MainTest {
         String input5 = "i01s";
         String input8 = "Is";
         String input9 = "i00";
+        String input10 = "i0100";
+        String input11 = "i100";
 
         //Valid Inputs
         String input6 = "I3";
@@ -771,19 +781,21 @@ class MainTest {
         for (int i = 1; i < 8; i++) {
             switch (i) {
                 case 1:
-                    Assertions.assertThrows(StringIndexOutOfBoundsException.class, ()-> {
-                        Main.CommandInput_I(input1, new int[5][5]);
+                    Main.CommandInput_I(input1, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertThrows(IndexOutOfBoundsException.class, ()-> {
+                        input1.charAt(1);
                     });
                     outputStreamCaptor_message.reset();
 
                 case 2:
                     Main.CommandInput_I(input2, new int[5][5]);
-                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n", outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 3:
                     Main.CommandInput_I(input3, new int[5][5]);
-                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, () -> {
                         Integer.parseInt(input3.substring(2));
                     });
@@ -791,7 +803,7 @@ class MainTest {
 
                 case 4:
                     Main.CommandInput_I(input4, new int[5][5]);
-                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, () -> {
                         Integer.parseInt(input4.substring(1));
                     });
@@ -799,7 +811,7 @@ class MainTest {
 
                 case 5:
                     Main.CommandInput_I(input5, new int[5][5]);
-                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n", outputStreamCaptor_message.toString());
                     Assertions.assertThrows(NumberFormatException.class, () -> {
                         Integer.parseInt(input5.substring(2));
                     });
@@ -827,14 +839,23 @@ class MainTest {
 
                 case 8:
                     Main.CommandInput_I(input8, new int[5][5]);
-                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n",outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
                 case 9:
                     Main.CommandInput_I(input9, new int[5][5]);
-                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n",outputStreamCaptor_message.toString());
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n",outputStreamCaptor_message.toString());
                     outputStreamCaptor_message.reset();
 
+                case 10:
+                    Main.CommandInput_I(input10, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n",outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
+
+                case 11:
+                    Main.CommandInput_I(input11, new int[5][5]);
+                    Assertions.assertEquals("Invalid Input. Please enter an positive integer value that is less than a 100\r\n",outputStreamCaptor_message.toString());
+                    outputStreamCaptor_message.reset();
             }
         }
     }
