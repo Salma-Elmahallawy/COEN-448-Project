@@ -119,11 +119,9 @@ class WhiteBoxTest {
         Main.CommandInput("D", 10, array);
         Assertions.assertFalse(Main.robot.isPenUp());
         Main.CommandInput("R", 10, array);
-        Assertions.assertEquals(1, 1);
+        Assertions.assertEquals(1, Main.robot.getDirection());
         Main.CommandInput("L", 10, array);
-        Assertions.assertEquals(0, 0);
-        Main.CommandInput("P", 10, array);
-        Assertions.assertEquals(0, 0);
+        Assertions.assertEquals(0, Main.robot.getDirection());
 
         System.setOut(new PrintStream(outputStreamCaptor_message));
 
