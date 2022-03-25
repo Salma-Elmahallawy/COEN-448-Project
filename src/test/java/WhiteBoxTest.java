@@ -3,9 +3,109 @@ import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.util.Scanner;
+import java.util.NoSuchElementException;
 
 class WhiteBoxTest {
+    private final ByteArrayOutputStream outputStreamCaptor_message = new ByteArrayOutputStream();
+    @Test
+    void testGridCreation() {
 
+        // Acceptable grid size: Between 0 and 100
+        Scanner sc1 = new Scanner("9");
+        Main.setGrid(Main.gridCreation(Main.getGrid(), sc1));
+        Assertions.assertEquals(9, Main.getGridSize());
+
+        System.setOut(new PrintStream(outputStreamCaptor_message));
+
+        // Invalid grid size: Less than 0
+        Scanner sc2 = new Scanner("-1");
+        Main.gridCreation(Main.getGrid(), sc2);
+        Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", outputStreamCaptor_message.toString());
+        outputStreamCaptor_message.reset();
+
+        // Invalid grid size: More than 100
+        Scanner sc3 = new Scanner("101");
+        Main.gridCreation(Main.getGrid(), sc3);
+        Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", outputStreamCaptor_message.toString());
+        outputStreamCaptor_message.reset();
+
+    }
+
+    @Test
+    void testGridCreationWithSpace() {
+        // Invalid grid size: Empty space
+        Scanner sc = new Scanner(" ");
+        Assertions.assertThrows(NoSuchElementException.class, () -> { Main.gridCreation(Main.getGrid(), sc);});
+
+    }
+
+    @Test
+    void testInitialize() {
+        Main.initialize(9);
+
+        Assertions.assertEquals(Main.robot.getxPosition(), 0);
+        Assertions.assertEquals(Main.robot.getyPosition(), 0);
+        Assertions.assertEquals(Main.robot.getDirection(), 0);
+        Assertions.assertEquals(Main.robot.isPenUp(), true);
+    }
+
+    @Test
+    void testPrintRobotInfo() {
+        // Test Print with Pen Up
+
+        System.setOut(new PrintStream(outputStreamCaptor_message));
+
+        Main.robot.setxPosition(5);
+        Main.robot.setyPosition(5);
+        Main.robot.setPenUp(true);
+        Main.robot.setDirection(1);
+        Main.printRobotInfo();
+
+        Assertions.assertEquals("""
+                            Current Position: (5,5)\r
+                            Pen Position: Up\r
+                            Pen Direction: East\r
+                            """, outputStreamCaptor_message.toString());
+
+        outputStreamCaptor_message.reset();
+
+        // Test Print with Pen Down
+        Main.robot.setxPosition(5);
+        Main.robot.setyPosition(5);
+        Main.robot.setPenUp(false);
+        Main.robot.setDirection(2);
+        Main.printRobotInfo();
+
+        Assertions.assertEquals("""
+                            Current Position: (5,5)\r
+                            Pen Position: Down\r
+                            Pen Direction: South\r
+                            """, outputStreamCaptor_message.toString());
+        outputStreamCaptor_message.reset();
+    }
+
+    @Test
+    void testPrintCommands() {
+        String[] allCommands = {"U", "D", "R", "L", "M s OR M0s", "P", "C", "Q", "I s or I0s"};
+        System.setOut(new PrintStream(outputStreamCaptor_message));
+        Main.PrintCommands(allCommands);
+
+        Assertions.assertEquals("""
+                Invalid Command. Please use one of the following commands:\r
+                U\r
+                D\r
+                R\r
+                L\r
+                M s OR M0s\r
+                P\r
+                C\r
+                Q\r
+                I s or I0s\r
+                """, outputStreamCaptor_message.toString());
+        outputStreamCaptor_message.reset();
+
+    }
 
     @Test
     public void testCommandInput() {
@@ -241,7 +341,3 @@ class WhiteBoxTest {
 
     }
 }
-
-
-
-
