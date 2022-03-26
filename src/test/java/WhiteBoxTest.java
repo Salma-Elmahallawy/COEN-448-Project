@@ -298,18 +298,24 @@ class WhiteBoxTest {
         // 1-2-6-8-end
         //t1
         Main.CommandInput_M("ML",gridSize,  Main.getGrid());
+        Assertions.assertEquals(5, Main.robot.getyPosition());
+        Assertions.assertEquals(0, Main.robot.getxPosition());
         Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
         outputStreamCaptor_message.reset();
 
         //F causes it to throw number out of bounds exception 1-2-6-7-9
         //t7
         Main.CommandInput_M("M5F",gridSize,  Main.getGrid());
+        Assertions.assertEquals(5, Main.robot.getyPosition());
+        Assertions.assertEquals(0, Main.robot.getxPosition());
         Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
         outputStreamCaptor_message.reset();
 
         //F causes number format exception from ParseInt exception 1-2-3-4-9
         //t8
         Main.CommandInput_M("M05F",gridSize,  Main.getGrid());
+        Assertions.assertEquals(5, Main.robot.getyPosition());
+        Assertions.assertEquals(0, Main.robot.getxPosition());
         Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
         outputStreamCaptor_message.reset();
 
@@ -317,6 +323,8 @@ class WhiteBoxTest {
         //t6
         Main.setGrid(new int[gridSize][gridSize]);
         Main.CommandInput_M("M", gridSize, Main.getGrid());
+        Assertions.assertEquals(5, Main.robot.getyPosition());
+        Assertions.assertEquals(0, Main.robot.getxPosition());
         Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
         outputStreamCaptor_message.reset();
     }
