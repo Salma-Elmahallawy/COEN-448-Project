@@ -57,8 +57,8 @@ public class BlackBoxTest {
         Main.CommandInput("R",2,new int[2][2]);
         Assertions.assertEquals(3, Main.robot.getDirection());
         //A1
-//        Main.CommandInput("R",2,new int[2][2]);
-//        Assertions.assertEquals(0, Main.robot.getDirection());
+        Main.CommandInput("R",2,new int[2][2]);
+        Assertions.assertEquals(0, Main.robot.getDirection());
 
         }
 
@@ -79,8 +79,8 @@ public class BlackBoxTest {
         Main.CommandInput("L",2,new int[2][2]);
         Assertions.assertEquals(0, Main.robot.getDirection());
         //A4
-//        Main.CommandInput("L",2,new int[2][2]);
-//        Assertions.assertEquals(3, Main.robot.getDirection());
+        Main.CommandInput("L",2,new int[2][2]);
+        Assertions.assertEquals(3, Main.robot.getDirection());
 
 
 

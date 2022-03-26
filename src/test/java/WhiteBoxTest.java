@@ -18,14 +18,17 @@ class WhiteBoxTest {
 
     @Test
     void testGridCreation() {
+        //t1
         Scanner sc1 = new Scanner("9");
         Main.setGrid(Main.gridCreation(Main.getGrid(), sc1));
         Assertions.assertEquals(9, Main.getGridSize());
         System.setOut(new PrintStream(this.outputStreamCaptor_message));
+        //t2
         Scanner sc2 = new Scanner("-1");
         Main.gridCreation(Main.getGrid(), sc2);
         Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", this.outputStreamCaptor_message.toString());
         this.outputStreamCaptor_message.reset();
+        //t3
         Scanner sc3 = new Scanner("101");
         Main.gridCreation(Main.getGrid(), sc3);
         Assertions.assertEquals("Invalid Input. Please enter an integer value greater than 0 and less than a 100\r\n", this.outputStreamCaptor_message.toString());
@@ -34,6 +37,7 @@ class WhiteBoxTest {
 
     @Test
     void testGridCreationWithSpace() {
+        //t4
         Scanner sc = new Scanner(" ");
         Assertions.assertThrows(NoSuchElementException.class, () -> {
             Main.gridCreation(Main.getGrid(), sc);
@@ -51,6 +55,7 @@ class WhiteBoxTest {
 
     @Test
     void testPrintRobotInfo() {
+        //t1
         System.setOut(new PrintStream(this.outputStreamCaptor_message));
         Main.robot.setxPosition(5);
         Main.robot.setyPosition(5);
@@ -59,6 +64,7 @@ class WhiteBoxTest {
         Main.printRobotInfo();
         Assertions.assertEquals("Current Position: (5,5)\r\nPen Position: Up\r\nPen Direction: East\r\n", this.outputStreamCaptor_message.toString());
         this.outputStreamCaptor_message.reset();
+        //t2
         Main.robot.setxPosition(5);
         Main.robot.setyPosition(5);
         Main.robot.setPenUp(false);
