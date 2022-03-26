@@ -258,7 +258,7 @@ class WhiteBoxTest {
     }
 
     @Test
-    public void testCommandInput_I() {
+    public void testCommandInput_M() {
 
         int gridSize = 10;
         Main.initialize(10);
@@ -297,7 +297,7 @@ class WhiteBoxTest {
 
         // 1-2-6-8-end
         //t1
-        Main.CommandInput_M("MF",gridSize,  Main.getGrid());
+        Main.CommandInput_M("ML",gridSize,  Main.getGrid());
         Assertions.assertEquals("Invalid Input. Please enter an positive integer value\r\n", outputStreamCaptor_message.toString());
         outputStreamCaptor_message.reset();
 
